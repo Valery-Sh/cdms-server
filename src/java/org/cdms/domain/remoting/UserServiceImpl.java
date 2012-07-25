@@ -42,24 +42,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(long id) {
-//     Validator v;
-//     ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory(); 
-//     v = validatorFactory.getValidator();  
+        User user;
+        try {
+            user = userDao.findById(id);
+        } catch(Exception e) {
+            exceptionHandler.throwTranslated(e);        
+        }
 
-
-        User u = new User();
-        u.setLastName("V");
-        //TODO remove two lines
-        if ( id > 60 )
-            validationHandler.validate(u);
-        User user = userDao.findById(id);
+        user = userDao.findById(id);
         return user;
     }
 
     @Override
     public void insert(User user) {
         validationHandler.validate(user);
-        userDao.insert(user);
+        try {
+            userDao.insert(user);
+        } catch(Exception e) {
+            exceptionHandler.throwTranslated(e);        
+        }
     }
 
     @Override
@@ -68,16 +69,22 @@ public class UserServiceImpl implements UserService {
         try {
             userDao.update(user);
         } catch (Exception e) {
+            
            if ( e instanceof HibernateOptimisticLockingFailureException) {
              HibernateOptimisticLockingFailureException ee = (HibernateOptimisticLockingFailureException)e;
              System.out.println("SERVER ERROR PUT " + e.getMessage() + "; class=" + e.getClass()); 
              System.out.println("---- className" + ee.getPersistentClassName()); 
              System.out.println("---- identifier" + ee.getIdentifier());              
            }
+           exceptionHandler.throwTranslated(e);
         }
     }
     @Override
     public void delete(long id) {
-        userDao.delete(id);
+        try {
+            userDao.delete(id); 
+        } catch(Exception e) {
+            exceptionHandler.throwTranslated(e);        
+        }
     }
 }

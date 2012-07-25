@@ -13,7 +13,7 @@ import org.springframework.orm.hibernate3.HibernateSystemException;
  */
 public class RemoteExceptionHandler {
     
-    public static void throwTranslated(Exception e) {
+    public void throwTranslated(Exception e) {
         RemoteDataAccessException re = new RemoteDataAccessException(e.getMessage());
         re.setOriginalClassName(e.getClass().getName());
         if ( e instanceof HibernateObjectRetrievalFailureException ) {
