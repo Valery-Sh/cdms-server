@@ -1,10 +1,13 @@
 package org.cdms.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -18,9 +21,13 @@ import javax.validation.constraints.Size;
 @Entity 
 @Table(name = "cdms_Users") 
 public class User implements Serializable {
-    
-    private long id;
-    private long version;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CDMS_USERS_SEQ")
+    @SequenceGenerator(allocationSize=1,initialValue=10, name = "CDMS_USERS_SEQ", sequenceName = "CDMS_USERS_SEQ")    
+    private Long id;
+    @Version
+    private Long version;
 
     @NotNull 
     @Size(min=1,max=16) 
@@ -35,22 +42,23 @@ public class User implements Serializable {
     @Size(min=1,max=16) 
     private String password;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CDMS_USERS_SEQ")
-    @SequenceGenerator(allocationSize=1,initialValue=10, name = "CDMS_USERS_SEQ", sequenceName = "CDMS_USERS_SEQ")    
-    public long getId() {
+    @OneToMany(mappedBy = "user")
+    private List<Permission> permissions = new ArrayList<Permission>();
+    
+    
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    @Version
-    public long getVersion() {
+    
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(long version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 
@@ -86,7 +94,17 @@ public class User implements Serializable {
         this.password = password;
     }
     
-//    @OneToMany(mappedBy = "userid")
-//    private List<CdmsPermissions> cdmsPermissionsList;
+    //@OneToMany(mappedBy = "user")
+    //@OneToMany
+
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    
 
 }

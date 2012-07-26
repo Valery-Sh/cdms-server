@@ -2,7 +2,9 @@ package org.cdms.domain.dao;
 
 import java.util.List;
 import org.cdms.domain.User;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +47,12 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
     @Override
     @Transactional(readOnly=true)
     public List<User> findAll() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //PageListHolder p;
+        //getHibernateTemplate().f
+        //Criteria c = new DetachedCriteria();
+        //Session s;
+        //DetachedCriteria d;
+        return null;
+        
     }
 }

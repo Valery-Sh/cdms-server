@@ -40,6 +40,7 @@
         <property name="annotatedClasses"> 
             <list> 
                 <value>org.cdms.domain.User</value> 
+                <value>org.cdms.domain.Permission</value> 
             </list> 
         </property>         
         <property name="hibernateProperties"> 
