@@ -1,7 +1,7 @@
 package org.cdms.domain.dao;
 
 import java.util.List;
-import org.cdms.domain.User;
+import org.cdms.entities.User;
 
 /**
  *
@@ -13,4 +13,5 @@ public interface UserDao {
     void delete(Long id); 
     User findById(Long id); 
     List<User> findAll(); 
+    User find(String userName,String password);
 }

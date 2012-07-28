@@ -4,14 +4,11 @@
  */
 package org.cdms.domain.remoting;
 
-import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import org.cdms.RemoteExceptionHandler;
-import org.cdms.RemoteValidationException;
 import org.cdms.ValidationHandler;
-import org.cdms.domain.User;
 import org.cdms.domain.dao.UserDao;
+import org.cdms.entities.User;
+import org.cdms.remoting.UserService;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 /**
@@ -48,6 +45,7 @@ public class UserServiceImpl implements UserService {
         } catch(Exception e) {
             exceptionHandler.throwTranslated(e);        
         }
+//org.springframework.remoting.caucho.HessianServiceExporter e;
 
         user = userDao.findById(id);
         return user;
@@ -86,5 +84,10 @@ public class UserServiceImpl implements UserService {
         } catch(Exception e) {
             exceptionHandler.throwTranslated(e);        
         }
+    }
+
+    @Override
+    public User authenticate(String userName, String password) {
+        return userDao.find(userName,password);
     }
 }

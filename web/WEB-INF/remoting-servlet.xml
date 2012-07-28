@@ -36,7 +36,8 @@
             <ref bean="userServiceImpl"/>
         </property>
         <property name="serviceInterface">
-            <value>org.cdms.domain.remoting.UserService</value>
+            <!--value>org.cdms.domain.remoting.UserService</value-->
+            <value>org.cdms.remoting.UserService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>

@@ -27,6 +27,10 @@ INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'view',10		
 	);
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
+		cdms_Permissions_seq.nextval,'view statistics',10		
+	);
+
+INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'view',30		
 	);
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (

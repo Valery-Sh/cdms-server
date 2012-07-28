@@ -1,7 +1,9 @@
 package org.cdms.domain.dao;
 
+import java.util.ArrayList;
 import java.util.List;
-import org.cdms.domain.User;
+import org.cdms.entities.Permission;
+import org.cdms.entities.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
@@ -34,14 +36,47 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
     @Override
     @Transactional
     public void delete(Long id) {
-        User user = (User)getHibernateTemplate().get(User.class,id);
+        //User user = (User)getHibernateTemplate()..get(User.class,id);
         getHibernateTemplate().delete(id);
     }
 
     @Override
     @Transactional(readOnly=true)
     public User findById(Long id) {
-        return (User) getHibernateTemplate().get(User.class, id);
+        User user = (User) getHibernateTemplate().get(User.class, id);
+        if ( user != null ) {
+            
+            getHibernateTemplate().initialize(user.getPermissions());
+        }
+        //getHibernateTemplate().getSessionFactory().getCurrentSession().
+        if ( user != null && user.getPermissions() != null && ! user.getPermissions().isEmpty() ) {
+             List l = new ArrayList();  
+             l.addAll(user.getPermissions());
+             user.setPermissions(l);
+            //Permission p = user.getPermissions().get(0);
+        }
+        return user;
+    }
+    
+    @Transactional(readOnly=true)
+    public User find(String userName, String password) {
+        List<User> users = (List<User>) getHibernateTemplate().
+                find("from User where userName=? and password=?", userName,password);
+        User user = null;
+        if ( users != null && !users.isEmpty()) {
+            user = users.get(0);
+        }            
+        if ( user != null ) {
+            getHibernateTemplate().initialize(user.getPermissions());
+        }
+        //getHibernateTemplate().getSessionFactory().getCurrentSession().
+        if ( user != null && user.getPermissions() != null && ! user.getPermissions().isEmpty() ) {
+             List l = new ArrayList();  
+             l.addAll(user.getPermissions());
+             user.setPermissions(l);
+            //Permission p = user.getPermissions().get(0);
+        }
+        return user;
     }
 
     @Override

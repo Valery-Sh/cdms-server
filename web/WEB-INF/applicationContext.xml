@@ -39,8 +39,8 @@
         <!--property name="configLocation" value="classpath:hibernate.cfg.xml" /--> 
         <property name="annotatedClasses"> 
             <list> 
-                <value>org.cdms.domain.User</value> 
-                <value>org.cdms.domain.Permission</value> 
+                <value>org.cdms.entities.User</value> 
+                <value>org.cdms.entities.Permission</value> 
             </list> 
         </property>         
         <property name="hibernateProperties"> 
