@@ -7,6 +7,7 @@
        xmlns:tx="http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
        xmlns:util="http://www.springframework.org/schema/util/spring-util-2.5.xsd"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:security="http://www.springframework.org/schema/security"       
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd http://www.springframework.org/schema/aop/spring-aop-2.5.xsd/spring-spring-aop-2.5.xsd-3.1.1.RELEASE.xsd
@@ -14,12 +15,15 @@
           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd http://www.springframework.org/schema/lang/spring-lang-2.5.xsd/spring-spring-lang-2.5.xsd-3.1.1.RELEASE.xsd
           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/tx/spring-tx-2.5.xsd/spring-spring-tx-2.5.xsd-3.1.1.RELEASE.xsd
           http://www.springframework.org/schema/util/spring-util-2.5.xsd http://www.springframework.org/schema/util/spring-util-2.5.xsd/spring-spring-util-2.5.xsd-3.1.1.RELEASE.xsd
+          http://www.springframework.org/schema/security
+          http://www.springframework.org/schema/security/spring-security-3.1.xsd
+          
 ">
     
     <!-- Configure UserService implementation class -->
     
     <bean id="userServiceImpl"
-        class="org.cdms.domain.remoting.UserServiceImpl">
+          class="org.cdms.remoting.impl.UserServiceImpl">
         <property name="userDao" ref="userDao" /> 
         <property name="validationHandler" ref="validationHandler" /> 
         <property name="exceptionHandler" ref="exceptionHandler" /> 
@@ -31,7 +35,7 @@
     <!-- Configure HessianServiceExporter for UserService  -->  
     
     <bean name="/UserService" 
-        class="org.springframework.remoting.caucho.HessianServiceExporter">
+          class="org.springframework.remoting.caucho.HessianServiceExporter">
         <property name="service">
             <ref bean="userServiceImpl"/>
         </property>
@@ -53,5 +57,23 @@
             </value>
         </property>
     </bean-->    
-    
+
+    <!-- SECURITY -->
+    <!--security:http auto-config="true">
+        <security:intercept-url pattern="/*" access="ROLE_USER"/>
+    </security:http>
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user authorities="ROLE_USER" name="guest" password="guest"/>
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager> 
+
+    <bean id="springSecurityFilterChain" class="org.springframework.security.util.FilterChainProxy">
+        <filter-chain-map path-type="ant">
+            <filter-chain pattern="/**" filters="sif"/>
+        </filter-chain-map>
+    </bean-->    
+                
 </beans>

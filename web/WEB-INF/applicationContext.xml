@@ -4,9 +4,13 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"       
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+    
 
     <!--bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
@@ -90,5 +94,47 @@
     <!-- Default Exception Handler  -->
       
     <bean id="exceptionHandler" class="org.cdms.RemoteExceptionHandler"/>    
+    
+    <!-- SECURITY -->
+    
+    <bean id="userDetailsServiceImpl"
+          class="org.cdms.auth.UserDetailsServiceImpl">
+    </bean>   
+    
+
+    <security:http>
+        <!--security:session-management session-fixation-protection="migrateSession"/-->
+ 
+        <!-- Make sure you are not sending login/password in plain text on open channel. Use SSL (https) instead -->
+        <!--security:intercept-url pattern="/login" requires-channel="http"/-->
+        <!--security:intercept-url pattern="/j_spring_security_check" requires-channel="https"/-->
+        <security:intercept-url pattern="/**" requires-channel="http"/>
+ 
+
+        <security:http-basic /> 
+        <!-- form login -->
+        <!--form-login login-page="/login" login-processing-url="/j_spring_security_check"
+                 always-use-default-target="true" default-target-url="/"/--> 
+        <!-- logout -->
+        <!--security:logout logout-url="/j_spring_security_logout"/-->
+ 
+        <!-- remember me -->
+        <!--security:remember-me key="rememberMeKey" user-service-ref="userDetailsService"/-->
+    </security:http>
+
+    <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userDetailsServiceImpl"/>
+        <!--property name="saltSource">
+            <bean class="org.springframework.security.authentication.dao.ReflectionSaltSource">
+                <property name="userPropertyToUse" value="username"/>
+            </bean>
+        </property>
+        <property name="passwordEncoder" ref="passwordEncoder"/-->
+    </bean>    
+    
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="daoAuthenticationProvider"/>
+    </security:authentication-manager>      
+    
     
 </beans>

@@ -1,11 +1,12 @@
 package org.cdms;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateJdbcException;
 import org.springframework.orm.hibernate3.HibernateObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.orm.hibernate3.HibernateQueryException;
 import org.springframework.orm.hibernate3.HibernateSystemException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  *
@@ -13,7 +14,7 @@ import org.springframework.orm.hibernate3.HibernateSystemException;
  */
 public class RemoteExceptionHandler {
     
-    public void throwTranslated(Exception e) {
+    public void throwDataAccessTranslated(Exception e) {
         RemoteDataAccessException re = new RemoteDataAccessException(e.getMessage());
         re.setOriginalClassName(e.getClass().getName());
         if ( e instanceof HibernateObjectRetrievalFailureException ) {
@@ -43,4 +44,11 @@ public class RemoteExceptionHandler {
         }
         throw re;
     }
+    
+    public void throwAuthTranslated(Exception e) {
+        RemoteAuthenticationException re = new RemoteAuthenticationException(e.getMessage());
+        re.setOriginalClassName(e.getClass().getName());
+        throw re;
+    }
+    
 }

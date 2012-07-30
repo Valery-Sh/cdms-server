@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cdms.domain.remoting;
+package org.cdms.remoting.impl;
 
 import org.cdms.RemoteExceptionHandler;
 import org.cdms.ValidationHandler;
@@ -10,6 +10,8 @@ import org.cdms.domain.dao.UserDao;
 import org.cdms.entities.User;
 import org.cdms.remoting.UserService;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -43,7 +45,7 @@ public class UserServiceImpl implements UserService {
         try {
             user = userDao.findById(id);
         } catch(Exception e) {
-            exceptionHandler.throwTranslated(e);        
+            exceptionHandler.throwDataAccessTranslated(e);        
         }
 //org.springframework.remoting.caucho.HessianServiceExporter e;
 
@@ -57,13 +59,15 @@ public class UserServiceImpl implements UserService {
         try {
             userDao.insert(user);
         } catch(Exception e) {
-            exceptionHandler.throwTranslated(e);        
+            exceptionHandler.throwDataAccessTranslated(e);        
         }
     }
 
     @Override
     public void update(User user) {
         validationHandler.validate(user);
+        //Authentication a = SecurityContextHolder.getContext().getAuthentication();
+        
         try {
             userDao.update(user);
         } catch (Exception e) {
@@ -74,7 +78,7 @@ public class UserServiceImpl implements UserService {
              System.out.println("---- className" + ee.getPersistentClassName()); 
              System.out.println("---- identifier" + ee.getIdentifier());              
            }
-           exceptionHandler.throwTranslated(e);
+           exceptionHandler.throwDataAccessTranslated(e);
         }
     }
     @Override
@@ -82,7 +86,7 @@ public class UserServiceImpl implements UserService {
         try {
             userDao.delete(id); 
         } catch(Exception e) {
-            exceptionHandler.throwTranslated(e);        
+            exceptionHandler.throwDataAccessTranslated(e);        
         }
     }
 
