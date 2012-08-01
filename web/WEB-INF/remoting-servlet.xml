@@ -1,24 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
-       xmlns:context="http://www.springframework.org/schema/context/spring-context-2.5.xsd"
-       xmlns:lang="http://www.springframework.org/schema/lang/spring-lang-2.5.xsd"
-       xmlns:tx="http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
-       xmlns:util="http://www.springframework.org/schema/util/spring-util-2.5.xsd"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:security="http://www.springframework.org/schema/security"       
-
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-          http://www.springframework.org/schema/aop/spring-aop-2.5.xsd http://www.springframework.org/schema/aop/spring-aop-2.5.xsd/spring-spring-aop-2.5.xsd-3.1.1.RELEASE.xsd
-          http://www.springframework.org/schema/context/spring-context-2.5.xsd http://www.springframework.org/schema/context/spring-context-2.5.xsd/spring-spring-context-2.5.xsd-3.1.1.RELEASE.xsd
-          http://www.springframework.org/schema/lang/spring-lang-2.5.xsd http://www.springframework.org/schema/lang/spring-lang-2.5.xsd/spring-spring-lang-2.5.xsd-3.1.1.RELEASE.xsd
-          http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/tx/spring-tx-2.5.xsd/spring-spring-tx-2.5.xsd-3.1.1.RELEASE.xsd
-          http://www.springframework.org/schema/util/spring-util-2.5.xsd http://www.springframework.org/schema/util/spring-util-2.5.xsd/spring-spring-util-2.5.xsd-3.1.1.RELEASE.xsd
-          http://www.springframework.org/schema/security
-          http://www.springframework.org/schema/security/spring-security-3.1.xsd
-          
-">
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+    
+
+
+    <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
+
+ 
+
+    <bean id="dataSource" 
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
+        <property name="driverClassName" 
+                  value="oracle.jdbc.OracleDriver" /> 
+        <property name="url" 
+                  value="jdbc:oracle:thin:@localhost:1521:XE" /> 
+        <property name="username" value="hr" /> 
+        <property name="password" value="hr" /> 
+    </bean> 
+ 
+    <bean id="sessionFactory" 
+          class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"> 
+        <property name="dataSource" ref="dataSource" /> 
+        <!--property name="configLocation" value="classpath:hibernate.cfg.xml" /--> 
+        <property name="annotatedClasses"> 
+            <list> 
+                <value>org.cdms.entities.User</value> 
+                <value>org.cdms.entities.Permission</value> 
+            </list> 
+        </property>         
+        <property name="hibernateProperties"> 
+            <props> 
+                <prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop> 
+                <prop key="hibernate.show_sql">true</prop> 
+            </props> 
+        </property>    
+    </bean> 
+
+    <!-- Configure HibenateTemplate -->
+    
+    <tx:annotation-driven /> 
+ 
+    <bean id="transactionManager" 
+          class="org.springframework.orm.hibernate3.HibernateTransactionManager"> 
+        <property name="sessionFactory" ref="sessionFactory" /> 
+    </bean> 
+    <bean id="hibernateTemplate" 
+          class="org.springframework.orm.hibernate3.HibernateTemplate"> 
+        <property name="sessionFactory" ref="sessionFactory" /> 
+    </bean> 
+        
+    <!--  Configure DAO objects  -->
+    
+    <bean id="userDao" 
+          class="org.cdms.domain.dao.UserDaoImpl"> 
+        <property name="hibernateTemplate" ref="hibernateTemplate" /> 
+    </bean>     
+
+    <!-- VALIDATION. Configure JSR-303 Validation -->
+    
+    <bean id="validatorFactory" class="javax.validation.Validation"
+          factory-method="buildDefaultValidatorFactory"
+     />
+
+    <bean id="validator" factory-bean="validatorFactory"
+          factory-method="getValidator" 
+    />  
+    
+    <!-- Default Validation Handler based on constraint annotations -->
+      
+    <bean id="validationHandler" class="org.cdms.ValidationHandler">    
+        <property name="validator" ref="validator" /> 
+    </bean> 
+        
+    <!-- Default Exception Handler  -->
+      
+    <bean id="exceptionHandler" class="org.cdms.RemoteExceptionHandler"/>    
     
     <!-- Configure UserService implementation class -->
     
@@ -30,6 +95,20 @@
         <!--property name="validator" ref="validator" /--> 
         
     </bean>
+    
+    <!-- Configure AuthService implementation class -->
+    
+    <bean id="authServiceImpl"
+          class="org.cdms.remoting.impl.AuthServiceImpl">
+        <!--property name="userService" ref="userServiceImpl" /--> 
+    </bean>
+    
+    <!-- Configure UserDetailsService implementation class.  -->
+    
+    <!--bean id="userDetailsServiceImpl"
+          class="org.cdms.auth.UserDetailsServiceImpl">
+        <property name="userService" ref="userServiceImpl" /> 
+    </bean-->
     
         
     <!-- Configure HessianServiceExporter for UserService  -->  
@@ -48,7 +127,44 @@
         </property>
 
     </bean>
+
+    <!-- Configure HessianServiceExporter for AuthService  -->  
     
+    <bean name="/AuthService" 
+          class="org.springframework.remoting.caucho.HessianServiceExporter">
+        <property name="service">
+            <ref bean="authServiceImpl"/>
+        </property>
+        <property name="serviceInterface">
+            <!--value>org.cdms.domain.remoting.UserService</value-->
+            <value>org.cdms.remoting.AuthService</value>
+        </property>
+        <property name="registerTraceInterceptor">
+            <value>false</value>
+        </property>
+
+    </bean>
+
+    <!--bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="index.htm">indexController</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:prefix="/WEB-INF/jsp/"
+          p:suffix=".jsp" /-->
+
+    <!--
+    The index controller.
+    -->
+    <!--bean name="indexController"
+          class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+          p:viewName="index" /-->
+                
     <!--bean id="urlMapping" class=
 "org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
@@ -58,22 +174,23 @@
         </property>
     </bean-->    
 
-    <!-- SECURITY -->
-    <!--security:http auto-config="true">
-        <security:intercept-url pattern="/*" access="ROLE_USER"/>
-    </security:http>
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider>
-            <security:user-service>
-                <security:user authorities="ROLE_USER" name="guest" password="guest"/>
-            </security:user-service>
-        </security:authentication-provider>
-    </security:authentication-manager> 
+    <bean id="userDetailsServiceImpl"
+          class="org.cdms.auth.UserDetailsServiceImpl">
+         <property name="userService" ref="userServiceImpl" /> 
+    </bean>   
+    
 
-    <bean id="springSecurityFilterChain" class="org.springframework.security.util.FilterChainProxy">
-        <filter-chain-map path-type="ant">
-            <filter-chain pattern="/**" filters="sif"/>
-        </filter-chain-map>
-    </bean-->    
-                
+    <security:http>
+        <security:intercept-url pattern="/**" requires-channel="http"/>
+        <security:http-basic/> 
+    </security:http>
+
+    <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userDetailsServiceImpl"/>
+    </bean>    
+    
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="daoAuthenticationProvider"/>
+    </security:authentication-manager>      
+                                
 </beans>

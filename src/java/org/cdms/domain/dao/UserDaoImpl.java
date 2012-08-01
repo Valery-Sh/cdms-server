@@ -59,9 +59,10 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
     }
     
     @Transactional(readOnly=true)
-    public User find(String userName, String password) {
+    @Override
+    public User findByUsername(String userName) {
         List<User> users = (List<User>) getHibernateTemplate().
-                find("from User where userName=? and password=?", userName,password);
+                find("from User where userName=?", userName);
         User user = null;
         if ( users != null && !users.isEmpty()) {
             user = users.get(0);
@@ -69,12 +70,10 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
         if ( user != null ) {
             getHibernateTemplate().initialize(user.getPermissions());
         }
-        //getHibernateTemplate().getSessionFactory().getCurrentSession().
         if ( user != null && user.getPermissions() != null && ! user.getPermissions().isEmpty() ) {
              List l = new ArrayList();  
              l.addAll(user.getPermissions());
              user.setPermissions(l);
-            //Permission p = user.getPermissions().get(0);
         }
         return user;
     }

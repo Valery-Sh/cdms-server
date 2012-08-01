@@ -97,44 +97,23 @@
     
     <!-- SECURITY -->
     
-    <bean id="userDetailsServiceImpl"
+    <!--bean id="userDetailsServiceImpl"
           class="org.cdms.auth.UserDetailsServiceImpl">
     </bean>   
     
 
     <security:http>
-        <!--security:session-management session-fixation-protection="migrateSession"/-->
- 
-        <!-- Make sure you are not sending login/password in plain text on open channel. Use SSL (https) instead -->
-        <!--security:intercept-url pattern="/login" requires-channel="http"/-->
-        <!--security:intercept-url pattern="/j_spring_security_check" requires-channel="https"/-->
         <security:intercept-url pattern="/**" requires-channel="http"/>
- 
-
-        <security:http-basic /> 
-        <!-- form login -->
-        <!--form-login login-page="/login" login-processing-url="/j_spring_security_check"
-                 always-use-default-target="true" default-target-url="/"/--> 
-        <!-- logout -->
-        <!--security:logout logout-url="/j_spring_security_logout"/-->
- 
-        <!-- remember me -->
-        <!--security:remember-me key="rememberMeKey" user-service-ref="userDetailsService"/-->
+        <security:http-basic  /> 
     </security:http>
 
     <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <property name="userDetailsService" ref="userDetailsServiceImpl"/>
-        <!--property name="saltSource">
-            <bean class="org.springframework.security.authentication.dao.ReflectionSaltSource">
-                <property name="userPropertyToUse" value="username"/>
-            </bean>
-        </property>
-        <property name="passwordEncoder" ref="passwordEncoder"/-->
     </bean>    
     
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="daoAuthenticationProvider"/>
-    </security:authentication-manager>      
+    </security:authentication-manager-->      
     
     
 </beans>

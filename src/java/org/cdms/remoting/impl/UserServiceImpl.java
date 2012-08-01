@@ -10,8 +10,6 @@ import org.cdms.domain.dao.UserDao;
 import org.cdms.entities.User;
 import org.cdms.remoting.UserService;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -45,11 +43,12 @@ public class UserServiceImpl implements UserService {
         try {
             user = userDao.findById(id);
         } catch(Exception e) {
+            user = null;
             exceptionHandler.throwDataAccessTranslated(e);        
         }
 //org.springframework.remoting.caucho.HessianServiceExporter e;
 
-        user = userDao.findById(id);
+        //user = userDao.findById(id);
         return user;
     }
 
@@ -67,7 +66,6 @@ public class UserServiceImpl implements UserService {
     public void update(User user) {
         validationHandler.validate(user);
         //Authentication a = SecurityContextHolder.getContext().getAuthentication();
-        
         try {
             userDao.update(user);
         } catch (Exception e) {
@@ -91,7 +89,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User authenticate(String userName, String password) {
-        return userDao.find(userName,password);
+    public User findByUsername(String userName) {
+        User user;
+        try {
+            user = userDao.findByUsername(userName);
+        } catch(Exception e) {
+            user = null;
+            // Dont'throw exception since the method is used internally
+            // exceptionHandler.throwDataAccessTranslated(e);        
+        }
+        return user;
+        
     }
 }
