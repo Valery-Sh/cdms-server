@@ -61,7 +61,7 @@ INSERT INTO cdms_Users (id,firstName,lastName,userName,password) VALUES (
 		cdms_Users_seq.nextval,'Roy','Harris','R.H.','rhpsw'		
 	);
 
---
+-- 
 -- Now Print all users
 --
 COLUMN id HEADING 'id';

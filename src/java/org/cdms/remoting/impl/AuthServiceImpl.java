@@ -30,6 +30,7 @@ public class AuthServiceImpl implements AuthService{
             user.setFirstName(au.getFirstName());
             user.setLastName(au.getLastName());
             user.setUserName(au.getUsername());
+            user.setTicket(au.getTicket());
             for ( GrantedAuthority gr : au.getAuthorities()) {
                 user.getRoles().add(gr.getAuthority());
             }

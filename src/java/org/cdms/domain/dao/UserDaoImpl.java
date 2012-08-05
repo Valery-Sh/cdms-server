@@ -2,11 +2,10 @@ package org.cdms.domain.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.cdms.entities.Permission;
 import org.cdms.entities.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,12 +47,10 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
             
             getHibernateTemplate().initialize(user.getPermissions());
         }
-        //getHibernateTemplate().getSessionFactory().getCurrentSession().
         if ( user != null && user.getPermissions() != null && ! user.getPermissions().isEmpty() ) {
              List l = new ArrayList();  
              l.addAll(user.getPermissions());
              user.setPermissions(l);
-            //Permission p = user.getPermissions().get(0);
         }
         return user;
     }
@@ -64,6 +61,7 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
         List<User> users = (List<User>) getHibernateTemplate().
                 find("from User where userName=?", userName);
         User user = null;
+        
         if ( users != null && !users.isEmpty()) {
             user = users.get(0);
         }            

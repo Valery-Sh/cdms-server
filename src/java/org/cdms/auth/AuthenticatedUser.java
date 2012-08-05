@@ -15,6 +15,7 @@ public class AuthenticatedUser extends User{
     
     private String firstName;
     private String lastName;
+    private String ticket;
     
     public AuthenticatedUser(String username,
             String password,
@@ -28,8 +29,17 @@ public class AuthenticatedUser extends User{
         this(username, password, authorities);
         this.firstName = firstName;
         this.lastName = lastName;
+        this.ticket = password; //TODO: in production 
                 
         
+    }
+
+    public String getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
     }
 
     public String getFirstName() {

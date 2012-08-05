@@ -35,6 +35,7 @@
             <list> 
                 <value>org.cdms.entities.User</value> 
                 <value>org.cdms.entities.Permission</value> 
+                <value>org.cdms.entities.Customer</value> 
             </list> 
         </property>         
         <property name="hibernateProperties"> 
@@ -62,6 +63,10 @@
     
     <bean id="userDao" 
           class="org.cdms.domain.dao.UserDaoImpl"> 
+        <property name="hibernateTemplate" ref="hibernateTemplate" /> 
+    </bean>     
+    <bean id="customerDao" 
+          class="org.cdms.domain.dao.CustomerDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
 
@@ -95,6 +100,16 @@
         <!--property name="validator" ref="validator" /--> 
         
     </bean>
+    <!-- Configure CustomerService implementation class -->
+    
+    <bean id="customerServiceImpl"
+          class="org.cdms.remoting.impl.CustomerServiceImpl">
+        <property name="customerDao" ref="customerDao" /> 
+        <property name="validationHandler" ref="validationHandler" /> 
+        <property name="exceptionHandler" ref="exceptionHandler" /> 
+        <!--property name="validator" ref="validator" /--> 
+        
+    </bean>
     
     <!-- Configure AuthService implementation class -->
     
@@ -121,6 +136,23 @@
         <property name="serviceInterface">
             <!--value>org.cdms.domain.remoting.UserService</value-->
             <value>org.cdms.remoting.UserService</value>
+        </property>
+        <property name="registerTraceInterceptor">
+            <value>false</value>
+        </property>
+
+    </bean>
+
+    <!-- Configure HessianServiceExporter for CustomerService  -->  
+    
+    <bean name="/CustomerService" 
+          class="org.springframework.remoting.caucho.HessianServiceExporter">
+        <property name="service">
+            <ref bean="customerServiceImpl"/>
+        </property>
+        <property name="serviceInterface">
+            <!--value>org.cdms.domain.remoting.UserService</value-->
+            <value>org.cdms.remoting.CustomerService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>
