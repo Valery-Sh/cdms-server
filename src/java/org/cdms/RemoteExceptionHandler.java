@@ -1,12 +1,11 @@
 package org.cdms;
 
+import org.cdms.remoting.exception.RemoteDataAccessException;
 import org.springframework.orm.hibernate3.HibernateJdbcException;
 import org.springframework.orm.hibernate3.HibernateObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.orm.hibernate3.HibernateQueryException;
 import org.springframework.orm.hibernate3.HibernateSystemException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  *

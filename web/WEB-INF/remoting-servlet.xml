@@ -82,7 +82,7 @@
     
     <!-- Default Validation Handler based on constraint annotations -->
       
-    <bean id="validationHandler" class="org.cdms.ValidationHandler">    
+    <bean id="validationHandler" class="org.cdms.remoting.validation.ValidationHandler">    
         <property name="validator" ref="validator" /> 
     </bean> 
         

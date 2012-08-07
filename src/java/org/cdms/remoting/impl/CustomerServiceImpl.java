@@ -6,10 +6,11 @@ package org.cdms.remoting.impl;
 
 import java.util.List;
 import org.cdms.RemoteExceptionHandler;
-import org.cdms.ValidationHandler;
+
 import org.cdms.domain.dao.CustomerDao;
 import org.cdms.entities.Customer;
 import org.cdms.remoting.CustomerService;
+import org.cdms.remoting.validation.ValidationHandler;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 /**

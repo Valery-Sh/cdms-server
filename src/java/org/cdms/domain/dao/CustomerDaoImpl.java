@@ -54,81 +54,6 @@ public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
         return customer;
     }
     
-/*    protected Customer findByPattern(PropertyFilter[] filters, boolean b) {
-        //String whereExpr + "from Customer where " 
-        String s = "";
-        
-        for ( PropertyFilter p : filters) {
-            if ( ! s.isEmpty() ) {
-                s += " and ";
-            }
-            s +=  createCompare(p);
-        }
-        String sql = "from Customer where " + s; 
-        List<Customer> customerList = (List<Customer>) getHibernateTemplate().find(sql);
-        Customer customer = null;
-        if ( customerList != null && ! customerList.isEmpty() ) {
-            customer = customerList.get(0);
-        }
-
-        return customer;
-        
-        
-    }    
-    
-    @Override
-    public Customer findByPattern(PropertyFilter[] filters) {
-        boolean allowCriteria = true;
-        for ( PropertyFilter p : filters) {
-            if ( ! p.isStringProperty()) {
-                //allowCriteria = false;
-                break;
-            }
-        }
-        if ( ! allowCriteria ) {
-            return findByPattern(filters, true);
-        }
-        DetachedCriteria dc = DetachedCriteria.forClass(Customer.class);
-        for ( PropertyFilter p : filters) {
-            dc.add(create(p));
-        }
-
-        List<Customer> customerList = (List<Customer>) getHibernateTemplate().findByCriteria(dc);
-        Customer customer = null;
-        if ( customerList != null && ! customerList.isEmpty() ) {
-            customer = customerList.get(0);
-        }
-        return customer;
-    }
-
-
-    protected Criterion create(PropertyFilter f ) {
-        Criterion c = null;
-        String cop = f.getOpName().toLowerCase();
-        if ( "=".equals(cop)) {
-            c = Restrictions.eq(f.getFieldName(), f.getValue());
-        } else if ( "like".equals(cop)) {
-            //c = Restrictions.like(f.getFieldName(), f.getValue().toString(),MatchMode.ANYWHERE);
-            //c = new SimpleExpressionEx(f.getFieldName(), f.getValue().toString());
-            c = Restrictions.sqlRestriction("{alias}.id like'%10%'");
-        }
-        
-        return c;
-    }
-
-    protected String createCompare(PropertyFilter f ) {
-        String c = "";
-        String cop = f.getOpName().toLowerCase();
-        if ( "=".equals(cop)) {
-            c = f.getFieldName() + "=" + f.getValue();
-        } else if ( "like".equals(cop)) {
-            c = f.getFieldName() + " like '%" + f.getValue() + "%'";
-        }
-        
-        return c;
-    }
-    
-*/    
     @Override
     @Transactional(readOnly=true)
     public List<Customer> findAll() {
@@ -143,17 +68,24 @@ public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
 
     @Override
     public List<Customer> findByExample(Customer sample,int start, int pageSize) {
-        Criterion c = Example.create(sample)
+        Criterion c = CdmsCriteriaExample.createEx(sample)
                 .enableLike(MatchMode.ANYWHERE)
-                .excludeZeroes()
+//                .excludeZeroes()
                 .excludeProperty("id")
+                .excludeProperty("idFilter")                
                 .excludeProperty("createdAt")
                 .excludeProperty("version");
         DetachedCriteria dc = DetachedCriteria.forClass(Customer.class);
-
+        
+        dc.add(c);
         // TODO instead of just getId() we must take into acount the leading zeros ?
-        dc.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getId() +"%'"));
-        dc.add(Restrictions.between("createdAt", sample.getCreatedAt(), sample.getCreatedAtEnd()));
+        if ( sample.getIdFilter() != null) {
+            dc.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
+        }
+        
+        
+        
+       // dc.add(Restrictions.between("createdAt", sample.getCreatedAt(), sample.getCreatedAtEnd()));
         
         int firstResult = start*pageSize;
         List<Customer> customers = (List<Customer>) getHibernateTemplate().findByCriteria(dc,firstResult,pageSize);
@@ -161,7 +93,12 @@ public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
             customer.getCreatedBy().setPermissions(new ArrayList());
             customer.getCreatedBy().setPassword(null);
         }
+/*        Long ll;
         
+        for ( long i=0; i < 200000000; i++) {
+            ll = i * 2 / 3;
+        }
+        */ 
         return customers;
 
     }

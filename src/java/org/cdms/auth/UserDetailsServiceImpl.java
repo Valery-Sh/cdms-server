@@ -53,6 +53,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         
         au.setFirstName(u.getFirstName());
         au.setLastName(u.getLastName());
+        au.setTicket(u.getPassword()); // TODO in production
         return au;
     }
 }
