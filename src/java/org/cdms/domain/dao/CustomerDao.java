@@ -8,11 +8,11 @@ import org.cdms.entities.Customer;
  * @author V. Shyshkin
  */
 public interface CustomerDao {
-    void insert(Customer user); 
-    void update(Customer user); 
+    Customer insert(Customer user); 
+    Customer update(Customer user); 
     void delete(Long id); 
     Customer findById(Long id); 
     List<Customer> findByExample(Customer sample, int start,int pageSize);     
-    List<Customer> findAll(); 
+    List<Customer> findAll(int start, int pageSize); 
     
 }

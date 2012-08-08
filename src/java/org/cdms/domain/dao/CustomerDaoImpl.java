@@ -5,15 +5,13 @@
 package org.cdms.domain.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.cdms.entities.Customer;
-import org.cdms.entities.Permission;
-import org.cdms.entities.PropertyFilter;
 import org.cdms.entities.User;
-import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Example;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -24,24 +22,34 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Valery
  */
 public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
+    
     @Override
     @Transactional
-    public void insert(Customer customer) {
+    public Customer insert(Customer customer) {
+        User u = getHibernateTemplate().get(User.class,customer.getCreatedBy().getId());
+        customer.setCreatedBy(u);
+        customer.setCreatedAt(new Date());
+
         getHibernateTemplate().save(customer);
+        getHibernateTemplate().initialize(customer.getCreatedBy());
+        return customer;
     }
     
     @Override
     @Transactional
-    public void update(Customer customer) {
+    public Customer update(Customer customer) {
         getHibernateTemplate().get(Customer.class,customer.getId());
-        getHibernateTemplate().merge(customer);
+        Customer c = getHibernateTemplate().merge(customer);
+        if ( c != null ) {
+            getHibernateTemplate().initialize(c.getCreatedBy());
+        }
+        return c;
     }
 
 
     @Override
     @Transactional
     public void delete(Long id) {
-        //User user = (User)getHibernateTemplate()..get(User.class,id);
         getHibernateTemplate().delete(id);
     }
 
@@ -49,51 +57,57 @@ public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
     @Transactional(readOnly=true)
     public Customer findById(Long id) {
         Customer customer = (Customer) getHibernateTemplate().get(Customer.class, id);
-        if ( customer != null ) {
-        }
         return customer;
     }
     
+
     @Override
     @Transactional(readOnly=true)
-    public List<Customer> findAll() {
-        //PageListHolder p;
-        //getHibernateTemplate().f
-        //Criteria c = new DetachedCriteria();
-        //Session s;
-        //DetachedCriteria d;
-        return null;
-        
+    public List<Customer> findAll(int start, int pageSize) {
+        Customer c = new Customer();
+        c.setCreatedBy(new User());
+        return findByExample(c, start, pageSize);
     }
 
     @Override
+    @Transactional(readOnly=true)    
     public List<Customer> findByExample(Customer sample,int start, int pageSize) {
         Criterion c = CdmsCriteriaExample.createEx(sample)
                 .enableLike(MatchMode.ANYWHERE)
-//                .excludeZeroes()
                 .excludeProperty("id")
                 .excludeProperty("idFilter")                
                 .excludeProperty("createdAt")
                 .excludeProperty("version");
-        DetachedCriteria dc = DetachedCriteria.forClass(Customer.class);
-        
-        dc.add(c);
-        // TODO instead of just getId() we must take into acount the leading zeros ?
+        DetachedCriteria customerCr = DetachedCriteria.forClass(Customer.class);
+        customerCr.add(c);
         if ( sample.getIdFilter() != null) {
-            dc.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
+            customerCr.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
+        }
+        if ( sample.getCreatedAt() != null) {
+            if ( sample.getCreatedAtEnd() == null ) {
+                sample.setCreatedAtEnd(sample.getCreatedAt());
+            }
+            customerCr.add(Restrictions.between("createdAt", sample.getCreatedAt(), sample.getCreatedAtEnd()));
+        } else if ( sample.getCreatedAtEnd() != null) {
+            customerCr.add(Restrictions.le("createdAt", sample.getCreatedAtEnd()));
         }
         
-        
-        
-       // dc.add(Restrictions.between("createdAt", sample.getCreatedAt(), sample.getCreatedAtEnd()));
+        DetachedCriteria userCr = customerCr.createCriteria("createdBy");
+        Criterion u = CdmsCriteriaExample.createEx(sample.getCreatedBy())
+                .enableLike(MatchMode.ANYWHERE)
+                .excludeProperty("id")
+                .excludeProperty("version");
+        userCr.add(u);
         
         int firstResult = start*pageSize;
-        List<Customer> customers = (List<Customer>) getHibernateTemplate().findByCriteria(dc,firstResult,pageSize);
+        List<Customer> customers = (List<Customer>) getHibernateTemplate().findByCriteria(customerCr,firstResult,pageSize);
         for ( Customer customer : customers) {
             customer.getCreatedBy().setPermissions(new ArrayList());
             customer.getCreatedBy().setPassword(null);
         }
-/*        Long ll;
+/*        
+  to   
+        Long ll;
         
         for ( long i=0; i < 200000000; i++) {
             ll = i * 2 / 3;

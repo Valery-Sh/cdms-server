@@ -49,7 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             permissions.add(new SimpleGrantedAuthority(p.getPermission()));
         }
     
-        AuthenticatedUser au = new AuthenticatedUser(userName, u.getPassword(), permissions);
+        AuthenticatedUser au = new AuthenticatedUser(u.getId(),userName, u.getPassword(), permissions);
         
         au.setFirstName(u.getFirstName());
         au.setLastName(u.getLastName());

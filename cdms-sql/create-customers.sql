@@ -30,9 +30,11 @@ CREATE SEQUENCE cdms_Customers_seq
     INCREMENT BY 10
     CACHE 50;
 
+
 INSERT INTO cdms_Customers (id,firstName,lastName,email,phone,createdAt,createdBy) VALUES (
 		cdms_Customers_seq.nextval,'Bob','Scott','b.scott@gmail.com','489617', TO_DATE('20120620','YYYYMMDD'),10		
 	);
+
 --
 -- Now Print all users
 --

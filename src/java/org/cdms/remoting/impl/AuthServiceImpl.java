@@ -27,6 +27,7 @@ public class AuthServiceImpl implements AuthService{
         if ( principal instanceof AuthenticatedUser) {
             AuthenticatedUser au = (AuthenticatedUser)principal;
             user = new UserInfo();
+            user.setId(au.getUserId());
             user.setFirstName(au.getFirstName());
             user.setLastName(au.getLastName());
             user.setUserName(au.getUsername());

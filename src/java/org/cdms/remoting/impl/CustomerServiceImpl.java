@@ -4,11 +4,13 @@
  */
 package org.cdms.remoting.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.cdms.RemoteExceptionHandler;
 
 import org.cdms.domain.dao.CustomerDao;
 import org.cdms.entities.Customer;
+import org.cdms.entities.Permission;
 import org.cdms.remoting.CustomerService;
 import org.cdms.remoting.validation.ValidationHandler;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
@@ -49,28 +51,38 @@ public class CustomerServiceImpl  implements CustomerService {
             customer = null;
             exceptionHandler.throwDataAccessTranslated(e);        
         }
-//org.springframework.remoting.caucho.HessianServiceExporter e;
-
-        //user = userDao.findById(id);
         return customer;
     }
 
     @Override
-    public void insert(Customer customer) {
+    public Customer insert(Customer customer) {
         validationHandler.validate(customer);
+        Customer result = null;
         try {
-            customerDao.insert(customer);
+            result = customerDao.insert(customer);
+            if ( result != null ) {
+                result.getCreatedBy().setPassword(null); // not null !!!
+                result.getCreatedBy().setPermissions(new ArrayList<Permission>());
+            }
+            
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
         }
+        return result;
     }
 
     @Override
-    public void update(Customer customer) {
+    public Customer update(Customer customer) {
         validationHandler.validate(customer);
+        Customer result = null;
         //Authentication a = SecurityContextHolder.getContext().getAuthentication();
         try {
-            customerDao.update(customer);
+            result = customerDao.update(customer);
+            if ( result != null ) {
+                result.getCreatedBy().setPassword(null); // not null !!!
+                result.getCreatedBy().setPermissions(new ArrayList<Permission>());
+            }
+
         } catch (Exception e) {
             
            if ( e instanceof HibernateOptimisticLockingFailureException) {
@@ -81,6 +93,7 @@ public class CustomerServiceImpl  implements CustomerService {
            }
            exceptionHandler.throwDataAccessTranslated(e);
         }
+        return result;
     }
     @Override
     public void delete(long id) {

@@ -12,21 +12,22 @@ import org.springframework.security.core.userdetails.User;
  * @author Valery
  */
 public class AuthenticatedUser extends User{
-    
+    private Long userId;
     private String firstName;
     private String lastName;
     private String ticket;
     
-    public AuthenticatedUser(String username,
+    public AuthenticatedUser(Long userId,String username,
             String password,
             java.util.Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
+        this.userId = userId;
     }
-    public AuthenticatedUser(String firstName,String lastName,
+    public AuthenticatedUser(Long userId,String firstName,String lastName,
             String username,
             String password,
             java.util.Collection<? extends GrantedAuthority> authorities) {
-        this(username, password, authorities);
+        this(userId,username, password, authorities);
         this.firstName = firstName;
         this.lastName = lastName;
         this.ticket = password; //TODO: in production 
@@ -34,6 +35,14 @@ public class AuthenticatedUser extends User{
         
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+    
     public String getTicket() {
         return ticket;
     }
