@@ -12,6 +12,7 @@ import org.cdms.domain.dao.CustomerDao;
 import org.cdms.entities.Customer;
 import org.cdms.entities.Permission;
 import org.cdms.remoting.CustomerService;
+import org.cdms.remoting.QueryPage;
 import org.cdms.remoting.validation.ValidationHandler;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
@@ -105,10 +106,10 @@ public class CustomerServiceImpl  implements CustomerService {
     }    
 
     @Override
-    public List<Customer> findByExample(Customer sample, int start,int pageSize) {
+    public List<Customer> findByExample(Customer sample, long firstRecordMaxId,int pageSize) {
         List<Customer> customers;
         try {
-            customers = customerDao.findByExample(sample,start, pageSize);
+            customers = customerDao.findByExample(sample,firstRecordMaxId, pageSize);
         } catch(Exception e) {
             customers = null;
             exceptionHandler.throwDataAccessTranslated(e);        
@@ -116,4 +117,18 @@ public class CustomerServiceImpl  implements CustomerService {
         return customers;
 
     }
+    
+    @Override
+    public QueryPage<Customer> findByExample(QueryPage<Customer> queryPage) {
+        QueryPage<Customer> result = null;
+        try {
+            //customers = customerDao.findByExample(sample,firstRecordMaxId, pageSize);
+            result = customerDao.findByExample(queryPage);
+        } catch(Exception e) {
+            exceptionHandler.throwDataAccessTranslated(e);        
+        }
+        return result;
+
+    }
+    
 }
