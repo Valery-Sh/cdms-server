@@ -13,11 +13,21 @@ import org.springframework.orm.hibernate3.HibernateSystemException;
  */
 public class RemoteExceptionHandler {
     
+    public void throwDeleteFailure(long id,String entityClassName) {
+        RemoteDataAccessException re = new RemoteDataAccessException("attempt to delete non-existend entity");
+        re.setErrorCode(RemoteDataAccessException.OBJECT_RETRIEVAL_DELETE);
+        re.setIdentifier(id);
+        re.setPersistentClassName(entityClassName);
+        re.setOriginalClassName(HibernateObjectRetrievalFailureException.class.getName());
+        throw re;
+
+    }    
     public void throwDataAccessTranslated(Exception e) {
         RemoteDataAccessException re = new RemoteDataAccessException(e.getMessage());
         re.setOriginalClassName(e.getClass().getName());
         if ( e instanceof HibernateObjectRetrievalFailureException ) {
             HibernateObjectRetrievalFailureException ex = (HibernateObjectRetrievalFailureException)e;
+            re.setErrorCode(RemoteDataAccessException.OBJECT_RETRIEVAL);
             re.setIdentifier(ex.getIdentifier());
             re.setPersistentClassName(ex.getPersistentClassName());
             if ( ex.getPersistentClass() != null ) {
@@ -25,21 +35,24 @@ public class RemoteExceptionHandler {
             }
         } else if ( e instanceof HibernateQueryException) {
             HibernateQueryException ex = (HibernateQueryException)e;            
+            re.setErrorCode(RemoteDataAccessException.QUERY);            
             re.setQueryString(ex.getQueryString());
         } else if ( e instanceof HibernateJdbcException) {
+            re.setErrorCode(RemoteDataAccessException.JDBC);            
             HibernateJdbcException ex = (HibernateJdbcException)e;
             re.setQueryString(ex.getSql());
         } else if ( e instanceof HibernateSystemException) {
-            
+            re.setErrorCode(RemoteDataAccessException.SYSTEM);            
         } else if ( e instanceof HibernateOptimisticLockingFailureException) {
             HibernateOptimisticLockingFailureException ex = (HibernateOptimisticLockingFailureException)e;
+            re.setErrorCode(RemoteDataAccessException.OPTIMISTIC_LOCKING);            
             re.setIdentifier(ex.getIdentifier());
             re.setPersistentClassName(ex.getPersistentClassName());
             if ( ex.getPersistentClass() != null ) {
                 re.setEntityName(ex.getPersistentClass().getSimpleName());
             }
         } else {
-            // TODO
+            re.setErrorCode(RemoteDataAccessException.SYSTEM);
         }
         throw re;
     }

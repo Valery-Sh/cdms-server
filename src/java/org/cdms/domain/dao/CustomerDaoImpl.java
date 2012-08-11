@@ -51,8 +51,20 @@ public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        getHibernateTemplate().delete(id);
+    public Customer delete(Long id) {
+        Customer result = new Customer();
+        Customer c = getHibernateTemplate().get(Customer.class, id);
+        if ( c != null ) {
+            User u = c.getCreatedBy();
+        //result = getHibernateTemplate().merge(result);
+            getHibernateTemplate().delete(c);
+            getHibernateTemplate().initialize(c.getCreatedBy());
+            //u.setPermissions(new ArrayList());
+            //u.setPassword("");
+            //c.setCreatedBy(u);
+        }
+        
+        return c;
     }
 
     @Override

@@ -7,7 +7,6 @@ package org.cdms.remoting.impl;
 import java.util.ArrayList;
 import java.util.List;
 import org.cdms.RemoteExceptionHandler;
-
 import org.cdms.domain.dao.CustomerDao;
 import org.cdms.entities.Customer;
 import org.cdms.entities.Permission;
@@ -97,12 +96,23 @@ public class CustomerServiceImpl  implements CustomerService {
         return result;
     }
     @Override
-    public void delete(long id) {
+    public Customer delete(long id) {
+        
+        Customer result = null;
         try {
-            customerDao.delete(id); 
+            result = customerDao.delete(id); 
+            if ( result != null ) {
+                result.getCreatedBy().setPassword(null); // not null !!!
+                result.getCreatedBy().setPermissions(new ArrayList<Permission>());
+            } 
+            
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
         }
+        if ( result == null ) {
+            exceptionHandler.throwDeleteFailure(id, Customer.class.getName());
+        }
+        return result;
     }    
 
     @Override

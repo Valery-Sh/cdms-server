@@ -50,3 +50,5 @@ COLUMN createdBy  HEADING 'Created By';
 SELECT id,firstName,LastName,email,phone,createdAt, createdBy FROM cdms_Customers ORDER BY firstName,lastName;
 
 DISCONNECT;
+
+

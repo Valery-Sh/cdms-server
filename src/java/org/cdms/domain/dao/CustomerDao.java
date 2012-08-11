@@ -11,7 +11,7 @@ import org.cdms.remoting.QueryPage;
 public interface CustomerDao {
     Customer insert(Customer user); 
     Customer update(Customer user); 
-    void delete(Long id); 
+    Customer delete(Long id); 
     Customer findById(Long id); 
     List<Customer> findByExample(Customer sample, long firstRecordMaxId,int pageSize);     
     QueryPage<Customer> findByExample(QueryPage<Customer> queryPage);
