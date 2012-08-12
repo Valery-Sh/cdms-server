@@ -32,7 +32,7 @@ CREATE SEQUENCE cdms_Customers_seq
 
 
 
-CREATE FUNCTION getRName
+CREATE FUNCTION getRandomName
 RETURN VARCHAR2
 AS
   idx Number;
@@ -122,29 +122,31 @@ DBMS_OUTPUT.PUT_LINE('==========================================================
 	lastNames(18) := 'Lee';  
 	lastNames(19) := 'Walker';  
 	lastNames(20) := 'Hall';  
+	FOR n IN 1..25 LOOP
+		FOR i IN 1..20 LOOP
+			FOR j IN 1..10 LOOP
+			    idx := DBMS_RANDOM.VALUE(1,20);	
+			    userId := DBMS_RANDOM.VALUE(1,10);	
+			    userId := userId * 10;	
+			    nphone := DBMS_RANDOM.VALUE(222222,90000000);			   
+	                    phonev := to_char(nphone);
+	                    lastNamev := lastNames(i) ;
+			    firstNamev	:=  getRandomName;
+		            emailv := firstNamev || n ||  '.' || lastNamev || i || j || '@gmail.com';		    	
+--		    DBMS_OUTPUT.PUT_LINE('Array element' ||  i || ',' ||  j   ||  ' = [' || lastNames(i)  ||  ']'   ||  '  NAME  ' || getRandomName || ' else=' || names(idx)  || '; userId=' || userId);
+--		    DBMS_OUTPUT.PUT_LINE('EMAIL = ' ||  emailv  || ' ; phone = ' || phonev || '; j=' || j || '; i=' || i );
 
-	FOR i IN 1..20 LOOP
-		FOR j IN 1..10 LOOP
-		    idx := DBMS_RANDOM.VALUE(1,20);	
-		    userId := DBMS_RANDOM.VALUE(1,10);	
-		    userId := userId * 10;	
-		    nphone := DBMS_RANDOM.VALUE(222222,90000000);			   
-                    phonev := to_char(nphone);
-                    lastNamev := lastNames(i) ;
-		    firstNamev	:=  getRName;
-	            emailv := firstNamev || '.' || lastNamev || '@gmail.com';		    	
---		    DBMS_OUTPUT.PUT_LINE('Array element' ||  i || ',' ||  j   ||  ' = [' || lastNames(i)  ||  ']'   ||  '  NAME  ' || getRName || ' else=' || names(idx)  || '; userId=' || userId);
-		    DBMS_OUTPUT.PUT_LINE('EMAIL = ' ||  emailv  || ' ; phone = ' || phonev || '; j=' || j || '; i=' || i );
-
-		    INSERT INTO cdms_Customers (id,firstName,lastName,email,phone,createdAt,createdBy) VALUES (
-   		             cdms_Customers_seq.nextval,firstNamev,lastNamev,LOWER(emailv),phonev, TO_DATE('20120620','YYYYMMDD'),userId
-	             );
-                END LOOP;     
+			    INSERT INTO cdms_Customers (id,firstName,lastName,email,phone,createdAt,createdBy) VALUES (
+   			             cdms_Customers_seq.nextval,firstNamev,lastNamev,LOWER(emailv),phonev, TO_DATE('20120620','YYYYMMDD'),userId
+	        	     );
+	                END LOOP;     
+		END LOOP;     
 	END LOOP;     
+
 
 	COMMIT;
 END;
 /
-DROP FUNCTION getRName;
+DROP FUNCTION getRandomName;
 
 DISCONNECT;

@@ -9,8 +9,8 @@ import org.cdms.remoting.QueryPage;
  * @author V. Shyshkin
  */
 public interface CustomerDao {
-    Customer insert(Customer user); 
-    Customer update(Customer user); 
+    Customer insert(Customer entity); 
+    Customer update(Customer entity); 
     Customer delete(Long id); 
     Customer findById(Long id); 
     List<Customer> findByExample(Customer sample, long firstRecordMaxId,int pageSize);     

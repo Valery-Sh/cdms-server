@@ -27,7 +27,8 @@ CREATE TABLE cdms_Invoices (
    createdBy  NUMBER  NOT NULL,                          -- The id of the user who inserted the record
    CONSTRAINT FK_INVOICES_ON_CUSTOMER
 	FOREIGN KEY (customerId) 
-	REFERENCES cdms_Customers(id),
+	REFERENCES cdms_Customers(id)
+         ON DELETE CASCADE
    CONSTRAINT FK_INVOICES_ON_USERS
 	FOREIGN KEY (createdBy) 
 	REFERENCES cdms_Users(id)
@@ -48,6 +49,7 @@ CREATE TABLE cdms_InvoiceItems (
    CONSTRAINT FK_INVOICEITEMS_ON_INVOICES
 	FOREIGN KEY (invoiceId) 
 	REFERENCES cdms_Invoices(id)
+	ON DELETE CASCADE
 );
 
 CREATE SEQUENCE cdms_InvoiceItems_seq 
@@ -56,5 +58,5 @@ CREATE SEQUENCE cdms_InvoiceItems_seq
     INCREMENT BY 10
     CACHE 50;
 
-DISCONNECT;
 
+DISCONNECT;

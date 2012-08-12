@@ -1,9 +1,9 @@
-SET SERVEROUTPUT ON;
-
 CONNECT / AS SYSDBA;
 ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
 DISCONNECT;
 CONNECT hr/hr;
+
+SET SERVEROUTPUT ON;
 --
 -- First drop lnked by foreign key table
 --
@@ -31,23 +31,6 @@ CREATE SEQUENCE cdms_Customers_seq
     CACHE 50;
 
 
-INSERT INTO cdms_Customers (id,firstName,lastName,email,phone,createdAt,createdBy) VALUES (
-		cdms_Customers_seq.nextval,'Bob','Scott','b.scott@gmail.com','489617', TO_DATE('20120620','YYYYMMDD'),10		
-	);
-
---
--- Now Print all users
---
-COLUMN id HEADING 'id';
-COLUMN version HEADING 'V.M';
-COLUMN firstName HEADING 'First Name';
-COLUMN lastName  HEADING 'Last Name';
-COLUMN email  HEADING 'Email';
-COLUMN phone  HEADING 'Phone';
-COLUMN createdAt  HEADING 'Create Date';
-COLUMN createdBy  HEADING 'Created By';
-
-SELECT id,firstName,LastName,email,phone,createdAt, createdBy FROM cdms_Customers ORDER BY firstName,lastName;
 
 DISCONNECT;
 

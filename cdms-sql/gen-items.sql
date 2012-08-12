@@ -1,6 +1,5 @@
 CONNECT / AS SYSDBA;
 
--- SET SERVEROUTPUT ON;  
 
 ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
 DISCONNECT;
@@ -79,11 +78,23 @@ END;
 DECLARE
 	
 	v_ItemName VARCHAR2(16);
-
+	userId INTEGER;
+        v_barcode VARCHAR2(12);
 BEGIN
 	FOR i IN 1..1000 LOOP
-		 DBMS_OUTPUT.PUT_LINE( ' --- ' || getRandomPrice );
+                v_itemName := getRandomItemName || i;
+  	        userId := TRUNC(DBMS_RANDOM.VALUE(1,10));	
+		userId := userId * 10;
+		v_barcode := '040' || TO_CHAR( TRUNC(DBMS_RANDOM.VALUE(197846441, 999999999)) );
+		DBMS_OUTPUT.PUT_LINE( ' --- ' || getRandomPrice ||  '; '  ||  v_itemName);
+		INSERT INTO cdms_Items (id, price,barcode,itemName,
+								   createdAt,createdBy ) VALUES (
+				cdms_Items_seq.nextval,
+			        getRandomPrice, v_barcode,v_itemName,TO_DATE('20120620','YYYYMMDD') ,userId		
+	        );
+		
 	END LOOP;     
+	COMMIT;
 
 END;
 /
@@ -92,3 +103,15 @@ DROP FUNCTION getRandomItemName;
 DROP FUNCTION getRandomPrice;
 
 DISCONNECT;
+
+
+				-- ----------- For each Invoice generate a range of InvoiceItems  -------------------------
+  			        v_count := TRUNC(DBMS_RANDOM.VALUE( v_minInvoiceItems, v_maxInvoiceItems));		
+				
+				FOR i IN 1..v_count LOOP
+
+					INSERT INTO cdms_InvoiceItems (id, invoiceId,itemId,itemCount)
+								   	 VALUES (
+										cdms_InvoiceItems_seq.nextval, v_seq_id,20, i
+		       			);
+				END LOOP;

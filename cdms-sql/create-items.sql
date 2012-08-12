@@ -1,17 +1,21 @@
-SET SERVEROUTPUT ON;
-
 CONNECT / AS SYSDBA;
+
+
 ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
 DISCONNECT;
 
 
 CONNECT hr/hr;
+
+SET SERVEROUTPUT ON;  
 --
 -- First drop lnked by foreign key table
 --
-
 DROP TABLE cdms_Items;
 DROP SEQUENCE cdms_Items_seq; 
+
+DROP FUNCTION getRandomItemName;
+DROP FUNCTION getRandomPrice;
 
 CREATE TABLE cdms_Items (
     id NUMBER PRIMARY KEY, 		-- must be incremented by cdms_Items_seq
@@ -33,6 +37,8 @@ CREATE SEQUENCE cdms_Items_seq
     START WITH 10
     INCREMENT BY 10
     CACHE 50;
+
+
 
 DISCONNECT;
 

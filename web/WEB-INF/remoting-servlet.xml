@@ -36,6 +36,7 @@
                 <value>org.cdms.entities.User</value> 
                 <value>org.cdms.entities.Permission</value> 
                 <value>org.cdms.entities.Customer</value> 
+                <value>org.cdms.entities.Invoice</value>                 
             </list> 
         </property>         
         <property name="hibernateProperties"> 
@@ -67,6 +68,10 @@
     </bean>     
     <bean id="customerDao" 
           class="org.cdms.domain.dao.CustomerDaoImpl"> 
+        <property name="hibernateTemplate" ref="hibernateTemplate" /> 
+    </bean>     
+    <bean id="invoiceDao" 
+          class="org.cdms.domain.dao.InvoiceDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
 
@@ -110,7 +115,18 @@
         <!--property name="validator" ref="validator" /--> 
         
     </bean>
+
+    <!-- Configure InvoiceService implementation class -->
     
+    <bean id="invoiceServiceImpl"
+          class="org.cdms.remoting.impl.InvoiceServiceImpl">
+        <property name="invoiceDao" ref="invoiceDao" /> 
+        <property name="validationHandler" ref="validationHandler" /> 
+        <property name="exceptionHandler" ref="exceptionHandler" /> 
+        <!--property name="validator" ref="validator" /--> 
+        
+    </bean>
+        
     <!-- Configure AuthService implementation class -->
     
     <bean id="authServiceImpl"
@@ -153,6 +169,23 @@
         <property name="serviceInterface">
             <!--value>org.cdms.domain.remoting.UserService</value-->
             <value>org.cdms.remoting.CustomerService</value>
+        </property>
+        <property name="registerTraceInterceptor">
+            <value>false</value>
+        </property>
+
+    </bean>
+
+    <!-- Configure HessianServiceExporter for InvoiceService  -->  
+    
+    <bean name="/InvoiceService" 
+          class="org.springframework.remoting.caucho.HessianServiceExporter">
+        <property name="service">
+            <ref bean="invoiceServiceImpl"/>
+        </property>
+        <property name="serviceInterface">
+            <!--value>org.cdms.domain.remoting.UserService</value-->
+            <value>org.cdms.remoting.InvoiceService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>
