@@ -37,6 +37,8 @@
                 <value>org.cdms.entities.Permission</value> 
                 <value>org.cdms.entities.Customer</value> 
                 <value>org.cdms.entities.Invoice</value>                 
+                <value>org.cdms.entities.InvoiceItem</value>                 
+                <value>org.cdms.entities.ProductItem</value>                 
             </list> 
         </property>         
         <property name="hibernateProperties"> 

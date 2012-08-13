@@ -115,7 +115,7 @@ public class CustomerServiceImpl  implements CustomerService {
         return result;
     }    
 
-    @Override
+/*    @Override
     public List<Customer> findByExample(Customer sample, long firstRecordMaxId,int pageSize) {
         List<Customer> customers;
         try {
@@ -127,12 +127,11 @@ public class CustomerServiceImpl  implements CustomerService {
         return customers;
 
     }
-    
+  */  
     @Override
     public QueryPage<Customer> findByExample(QueryPage<Customer> queryPage) {
         QueryPage<Customer> result = null;
         try {
-            //customers = customerDao.findByExample(sample,firstRecordMaxId, pageSize);
             result = customerDao.findByExample(queryPage);
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        

@@ -4,11 +4,13 @@
  */
 package org.cdms.domain.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.cdms.entities.Invoice;
-
+import org.cdms.entities.InvoiceItem;
+import org.cdms.entities.Permission;
 import org.cdms.entities.User;
 import org.cdms.remoting.QueryPage;
 import org.hibernate.criterion.Criterion;
@@ -77,8 +79,11 @@ public class InvoiceDaoImpl extends HibernateDaoSupport implements InvoiceDao{
                 .enableLike(MatchMode.ANYWHERE)
                 .excludeProperty("id")
                 .excludeProperty("idFilter")                
+                .excludeProperty("customer") 
+                .excludeProperty("invoiceItems")                                
                 .excludeProperty("createdAt")
                 .excludeProperty("version");
+        
         DetachedCriteria mainCriteria = DetachedCriteria.forClass(Invoice.class);
         mainCriteria.add(c);
         if ( sample.getIdFilter() != null) {
@@ -97,9 +102,20 @@ public class InvoiceDaoImpl extends HibernateDaoSupport implements InvoiceDao{
         Criterion u = CdmsCriteriaExample.createEx(sample.getCreatedBy())
                 .enableLike(MatchMode.ANYWHERE)
                 .excludeProperty("id")
-                .excludeProperty("version");
+                .excludeProperty("version")
+                .excludeProperty("permissions");
+        
         userCr.add(u);
         
+        DetachedCriteria customerCr = mainCriteria.createCriteria("customer");
+        Criterion cust = CdmsCriteriaExample.createEx(sample.getCustomer())
+                .enableLike(MatchMode.ANYWHERE)
+                .excludeProperty("id")
+                .excludeProperty("createdBy")
+                .excludeProperty("createdAt")
+                .excludeProperty("version");
+        
+        customerCr.add(cust);
 
         
         return mainCriteria;
@@ -109,7 +125,6 @@ public class InvoiceDaoImpl extends HibernateDaoSupport implements InvoiceDao{
     public QueryPage<Invoice> findByExample(QueryPage<Invoice> queryPage) {
         DetachedCriteria mainCriteria = buildCriteriaByExample(queryPage);
         Invoice sample = queryPage.getEntityAsExample();
-
         
         mainCriteria.setProjection(Projections.rowCount());
         List rowCountList = getHibernateTemplate().findByCriteria(mainCriteria);
@@ -122,11 +137,14 @@ public class InvoiceDaoImpl extends HibernateDaoSupport implements InvoiceDao{
         int firstRec = queryPage.getPageNo() * queryPage.getPageSize();
 
         List<Invoice> entities = (List<Invoice>) getHibernateTemplate().findByCriteria(mainCriteria,firstRec,queryPage.getPageSize());        
-        for ( Invoice entity : entities) {
-            entity.getCreatedBy().setPermissions(new ArrayList());
-            entity.getCreatedBy().setPassword(null);
-        }
-        queryPage.setQueryResult(entities);
+        List<Invoice> list = new ArrayList<Invoice>();
+        list.addAll(entities);
+        for ( Invoice entity : list) {
+            getHibernateTemplate().initialize(entity.getInvoiceItems());
+            getHibernateTemplate().initialize(entity.getCustomer().getCreatedBy().getPermissions());            
+            getHibernateTemplate().initialize(entity.getCreatedBy().getPermissions());                        
+        }            
+        queryPage.setQueryResult(list);
         queryPage.setEntityAsExample(null);
         return queryPage;
 
