@@ -5,7 +5,6 @@
 package org.cdms.remoting.impl;
 
 import java.util.ArrayList;
-import java.util.List;
 import org.cdms.RemoteExceptionHandler;
 import org.cdms.domain.dao.CustomerDao;
 import org.cdms.entities.Customer;
@@ -19,7 +18,7 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
  *
  * @author Valery
  */
-public class CustomerServiceImpl  implements CustomerService {
+public class CustomerServiceImpl<E extends Customer>  implements CustomerService<E> {
 
     private CustomerDao customerDao;
 
@@ -43,10 +42,10 @@ public class CustomerServiceImpl  implements CustomerService {
    
 
     @Override
-    public Customer findById(long id) {
-        Customer customer;
+    public E findById(long id) {
+        E customer;
         try {
-            customer = customerDao.findById(id);
+            customer = (E)customerDao.findById(id);
         } catch(Exception e) {
             customer = null;
             exceptionHandler.throwDataAccessTranslated(e);        
@@ -55,11 +54,11 @@ public class CustomerServiceImpl  implements CustomerService {
     }
 
     @Override
-    public Customer insert(Customer customer) {
+    public E insert(E customer) {
         validationHandler.validate(customer);
-        Customer result = null;
+        E result = null;
         try {
-            result = customerDao.insert(customer);
+            result = (E)customerDao.insert(customer);
             if ( result != null ) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
@@ -72,12 +71,12 @@ public class CustomerServiceImpl  implements CustomerService {
     }
 
     @Override
-    public Customer update(Customer customer) {
+    public E update(E customer) {
         validationHandler.validate(customer);
-        Customer result = null;
+        E result = null;
         //Authentication a = SecurityContextHolder.getContext().getAuthentication();
         try {
-            result = customerDao.update(customer);
+            result = (E)customerDao.update(customer);
             if ( result != null ) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
@@ -96,8 +95,11 @@ public class CustomerServiceImpl  implements CustomerService {
         return result;
     }
     @Override
-    public Customer delete(long id) {
-        
+    public E delete(E c) {
+        return deleteById(c.getId());
+    }    
+    @Override
+    public E deleteById(Long id) {
         Customer result = null;
         try {
             result = customerDao.delete(id); 
@@ -112,32 +114,23 @@ public class CustomerServiceImpl  implements CustomerService {
         if ( result == null ) {
             exceptionHandler.throwDeleteFailure(id, Customer.class.getName());
         }
-        return result;
+        return (E)result;
     }    
 
-/*    @Override
-    public List<Customer> findByExample(Customer sample, long firstRecordMaxId,int pageSize) {
-        List<Customer> customers;
-        try {
-            customers = customerDao.findByExample(sample,firstRecordMaxId, pageSize);
-        } catch(Exception e) {
-            customers = null;
-            exceptionHandler.throwDataAccessTranslated(e);        
-        }
-        return customers;
-
-    }
-  */  
     @Override
-    public QueryPage<Customer> findByExample(QueryPage<Customer> queryPage) {
-        QueryPage<Customer> result = null;
+    public QueryPage<E> findByExample(QueryPage<E> queryPage) {
+        QueryPage result = null;
+        QueryPage r = queryPage;
         try {
-            result = customerDao.findByExample(queryPage);
+            //result = customerDao.findByExample(queryPage);
+            result = customerDao.findByExample(r);
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
         }
         return result;
 
     }
+
+
     
 }

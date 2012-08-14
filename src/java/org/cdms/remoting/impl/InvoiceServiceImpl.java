@@ -23,13 +23,12 @@ import org.cdms.remoting.validation.ValidationHandler;
  *
  * @author Valery
  */
-public class InvoiceServiceImpl  implements InvoiceService {
+public class InvoiceServiceImpl implements InvoiceService {
 
     private InvoiceDao entityDao;
-
     private ValidationHandler validationHandler;
     private RemoteExceptionHandler exceptionHandler;
-    
+
     public InvoiceServiceImpl() {
     }
 
@@ -44,16 +43,15 @@ public class InvoiceServiceImpl  implements InvoiceService {
     public void setExceptionHandler(RemoteExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
-   
 
     @Override
     public Invoice findById(long id) {
         Invoice entity;
         try {
             entity = entityDao.findById(id);
-        } catch(Exception e) {
+        } catch (Exception e) {
             entity = null;
-            exceptionHandler.throwDataAccessTranslated(e);        
+            exceptionHandler.throwDataAccessTranslated(e);
         }
         return entity;
     }
@@ -64,13 +62,13 @@ public class InvoiceServiceImpl  implements InvoiceService {
         Invoice result = null;
         try {
             result = entityDao.insert(entity);
-            if ( result != null ) {
+            if (result != null) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
             }
-            
-        } catch(Exception e) {
-            exceptionHandler.throwDataAccessTranslated(e);        
+
+        } catch (Exception e) {
+            exceptionHandler.throwDataAccessTranslated(e);
         }
         return result;
     }
@@ -82,85 +80,68 @@ public class InvoiceServiceImpl  implements InvoiceService {
         //Authentication a = SecurityContextHolder.getContext().getAuthentication();
         try {
             result = entityDao.update(entity);
-            if ( result != null ) {
+            if (result != null) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
             }
 
         } catch (Exception e) {
-            
-           exceptionHandler.throwDataAccessTranslated(e);
+
+            exceptionHandler.throwDataAccessTranslated(e);
         }
         return result;
     }
+
     @Override
     public Invoice delete(long id) {
-        
+
         Invoice result = null;
         try {
-            result = entityDao.delete(id); 
-            if ( result != null ) {
+            result = entityDao.delete(id);
+            if (result != null) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
-            } 
-            
-        } catch(Exception e) {
-            exceptionHandler.throwDataAccessTranslated(e);        
+            }
+
+        } catch (Exception e) {
+            exceptionHandler.throwDataAccessTranslated(e);
         }
-        if ( result == null ) {
+        if (result == null) {
             exceptionHandler.throwDeleteFailure(id, Invoice.class.getName());
         }
         return result;
-    }    
+    }
 
-        
     @Override
     public QueryPage<Invoice> findByExample(QueryPage<Invoice> queryPage) {
         QueryPage<Invoice> result = null;
         try {
-//System.out.println("V!@#$%^&SDFGHJKL+++++++++++++++++++++++++++++++");            
             result = entityDao.findByExample(queryPage);
-            
-        } catch(Exception e) {
-            exceptionHandler.throwDataAccessTranslated(e);        
+        } catch (Exception e) {
+            exceptionHandler.throwDataAccessTranslated(e);
         }
-        for ( Invoice entity : result.getQueryResult() ) {
+        for (Invoice entity : result.getQueryResult()) {
+
+//            entity.getCustomer().setCreatedBy(null);
+//            ArrayList a = new ArrayList();
+//            a.addAll(entity.getCustomer().getCreatedBy().getPermissions());
+            entity.getCustomer().getCreatedBy().setPermissions(new ArrayList());
+            entity.getCreatedBy().setPermissions(new ArrayList());
             
-            entity.getCustomer().setCreatedBy(null);
+//            entity.getCustomer().setCreatedBy(null);
             
             ArrayList<InvoiceItem> l = new ArrayList<InvoiceItem>();
-            List<InvoiceItem> il = entity.getInvoiceItems();
-            if ( il != null ) {
-                l.addAll(il);
+            List<InvoiceItem> ilist = entity.getInvoiceItems();
+            if (ilist != null) {
+                l.addAll(ilist);
             }
-            /*for ( InvoiceItem it : l) {
-                //it.getProductItem().setCreatedBy(new User());
-                //Date d = it.getProductItem().getCreatedAt();
-                //it.getProductItem().setCreatedAt(null);
-                //it.setInvoice(new Invoice());
-            }*/
+            for ( InvoiceItem it : ilist ) {
+                it.getProductItem().setStringPrice(it.getProductItem().getPrice().toPlainString());
+            }
             entity.setInvoiceItems(l);
         }
-        
-/*        List<Invoice> l = result.getQueryResult();
-        Invoice inv = l.get(0);
-        //for ( Invoice inv : l) {
-            if ( inv != null ) {
-                for ( InvoiceItem ii : inv.getInvoiceItems()){
-System.out.println("ITEM");                                
-                    if ( ii != null ) {
-                        BigDecimal b = ii.getProductItem().getPrice();
-                        if ( b != null ) {
-                            ii.getProductItem().setStringPrice(b.toPlainString());
-                        }
-                    }
-                }
-            }
-        //}
-        */ 
-//System.out.println("END END END END END END END END END END END END");                                
+
         return result;
 
     }
-    
 }
