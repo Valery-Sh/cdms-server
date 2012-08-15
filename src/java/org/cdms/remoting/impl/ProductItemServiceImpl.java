@@ -5,30 +5,33 @@
 package org.cdms.remoting.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.cdms.RemoteExceptionHandler;
-import org.cdms.domain.dao.InvoiceDao;
-import org.cdms.entities.Invoice;
+import org.cdms.domain.dao.ProductItemDao;
+import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.Permission;
-import org.cdms.remoting.InvoiceService;
+import org.cdms.entities.ProductItem;
+import org.cdms.remoting.ProductItemService;
 import org.cdms.remoting.QueryPage;
 import org.cdms.remoting.validation.ValidationHandler;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 /**
  *
  * @author Valery
  */
-public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E> {
+public class ProductItemServiceImpl<E extends ProductItem>  implements ProductItemService<E> {
 
-    private InvoiceDao entityDao;
+    private ProductItemDao productItemDao;
 
     private ValidationHandler validationHandler;
     private RemoteExceptionHandler exceptionHandler;
     
-    public InvoiceServiceImpl() {
+    public ProductItemServiceImpl() {
     }
 
-    public void setInvoiceDao(InvoiceDao dao) {
-        this.entityDao = dao;
+    public void setProductItemDao(ProductItemDao dao) {
+        this.productItemDao = dao;
     }
 
     public void setValidationHandler(ValidationHandler validationHandler) {
@@ -44,7 +47,7 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     public E findById(long id) {
         E entity;
         try {
-            entity = (E)entityDao.findById(id);
+            entity = (E)productItemDao.findById(id);
         } catch(Exception e) {
             entity = null;
             exceptionHandler.throwDataAccessTranslated(e);        
@@ -57,7 +60,7 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
         validationHandler.validate(entity);
         E result = null;
         try {
-            result = (E)entityDao.insert(entity);
+            result = (E)productItemDao.insert(entity);
             if ( result != null ) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
@@ -73,15 +76,22 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     public E update(E entity) {
         validationHandler.validate(entity);
         E result = null;
-
+        //Authentication a = SecurityContextHolder.getContext().getAuthentication();
         try {
-            result = (E)entityDao.update(entity);
+            result = (E)productItemDao.update(entity);
             if ( result != null ) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
             }
 
         } catch (Exception e) {
+            
+           if ( e instanceof HibernateOptimisticLockingFailureException) {
+             HibernateOptimisticLockingFailureException ee = (HibernateOptimisticLockingFailureException)e;
+             System.out.println("SERVER ERROR PUT " + e.getMessage() + "; class=" + e.getClass()); 
+             System.out.println("---- className" + ee.getPersistentClassName()); 
+             System.out.println("---- identifier" + ee.getIdentifier());              
+           }
            exceptionHandler.throwDataAccessTranslated(e);
         }
         return result;
@@ -92,9 +102,9 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     }    
     @Override
     public E deleteById(Long id) {
-        Invoice result = null;
+        ProductItem result = null;
         try {
-            result = entityDao.delete(id); 
+            result = productItemDao.delete(id); 
             if ( result != null ) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
@@ -104,7 +114,7 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
             exceptionHandler.throwDataAccessTranslated(e);        
         }
         if ( result == null ) {
-            exceptionHandler.throwDeleteFailure(id, Invoice.class.getName());
+            exceptionHandler.throwDeleteFailure(id, ProductItem.class.getName());
         }
         return (E)result;
     }    
@@ -114,13 +124,18 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
         QueryPage result = null;
         QueryPage r = queryPage;
         try {
-            result = entityDao.findByExample(r);
+            result = productItemDao.findByExample(r);
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
+        }
+        for ( ProductItem it :queryPage.getQueryResult() ) {
+            it.setStringPrice(it.getPrice().toPlainString());
         }
         
         return result;
 
     }
 
+
+    
 }

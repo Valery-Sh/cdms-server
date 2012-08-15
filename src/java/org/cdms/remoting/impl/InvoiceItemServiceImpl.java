@@ -4,31 +4,37 @@
  */
 package org.cdms.remoting.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import org.cdms.RemoteExceptionHandler;
-import org.cdms.domain.dao.InvoiceDao;
-import org.cdms.entities.Invoice;
+import org.cdms.domain.dao.InvoiceItemDao;
+import org.cdms.domain.dao.ProductItemDao;
+import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.Permission;
-import org.cdms.remoting.InvoiceService;
+import org.cdms.entities.ProductItem;
+import org.cdms.remoting.InvoiceItemService;
+import org.cdms.remoting.ProductItemService;
 import org.cdms.remoting.QueryPage;
 import org.cdms.remoting.validation.ValidationHandler;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 /**
  *
  * @author Valery
  */
-public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E> {
+public class InvoiceItemServiceImpl<E extends InvoiceItem>  implements InvoiceItemService<E> {
 
-    private InvoiceDao entityDao;
+    private InvoiceItemDao invoiceItemDao;
 
     private ValidationHandler validationHandler;
     private RemoteExceptionHandler exceptionHandler;
     
-    public InvoiceServiceImpl() {
+    public InvoiceItemServiceImpl() {
     }
 
-    public void setInvoiceDao(InvoiceDao dao) {
-        this.entityDao = dao;
+    public void setInvoiceItemDao(InvoiceItemDao dao) {
+        this.invoiceItemDao = dao;
     }
 
     public void setValidationHandler(ValidationHandler validationHandler) {
@@ -44,7 +50,8 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     public E findById(long id) {
         E entity;
         try {
-            entity = (E)entityDao.findById(id);
+            entity = (E)invoiceItemDao.findById(id);
+            entity.getProductItem().setStringPrice(entity.getProductItem().getPrice().toPlainString());
         } catch(Exception e) {
             entity = null;
             exceptionHandler.throwDataAccessTranslated(e);        
@@ -55,14 +62,11 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     @Override
     public E insert(E entity) {
         validationHandler.validate(entity);
+        entity.getProductItem().setPrice(new BigDecimal(entity.getProductItem().getStringPrice()));        
+        
         E result = null;
         try {
-            result = (E)entityDao.insert(entity);
-            if ( result != null ) {
-                result.getCreatedBy().setPassword(null); // not null !!!
-                result.getCreatedBy().setPermissions(new ArrayList<Permission>());
-            }
-            
+            result = (E)invoiceItemDao.insert(entity);
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
         }
@@ -72,15 +76,11 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     @Override
     public E update(E entity) {
         validationHandler.validate(entity);
+        entity.getProductItem().setPrice(new BigDecimal(entity.getProductItem().getStringPrice()));        
+        
         E result = null;
-
         try {
-            result = (E)entityDao.update(entity);
-            if ( result != null ) {
-                result.getCreatedBy().setPassword(null); // not null !!!
-                result.getCreatedBy().setPermissions(new ArrayList<Permission>());
-            }
-
+            result = (E)invoiceItemDao.update(entity);
         } catch (Exception e) {
            exceptionHandler.throwDataAccessTranslated(e);
         }
@@ -92,19 +92,14 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     }    
     @Override
     public E deleteById(Long id) {
-        Invoice result = null;
+        InvoiceItem result = null;
         try {
-            result = entityDao.delete(id); 
-            if ( result != null ) {
-                result.getCreatedBy().setPassword(null); // not null !!!
-                result.getCreatedBy().setPermissions(new ArrayList<Permission>());
-            } 
-            
+            result = invoiceItemDao.delete(id); 
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
         }
         if ( result == null ) {
-            exceptionHandler.throwDeleteFailure(id, Invoice.class.getName());
+            exceptionHandler.throwDeleteFailure(id, ProductItem.class.getName());
         }
         return (E)result;
     }    
@@ -114,13 +109,18 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
         QueryPage result = null;
         QueryPage r = queryPage;
         try {
-            result = entityDao.findByExample(r);
+            result = invoiceItemDao.findByExample(r);
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
+        }
+        for ( InvoiceItem it : queryPage.getQueryResult() ) {
+            it.getProductItem().setStringPrice(it.getProductItem().getPrice().toPlainString());
         }
         
         return result;
 
     }
 
+
+    
 }

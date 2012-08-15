@@ -15,8 +15,6 @@
 
     <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
 
- 
-
     <bean id="dataSource" 
           class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
         <property name="driverClassName" 
@@ -76,6 +74,15 @@
           class="org.cdms.domain.dao.InvoiceDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
+    <bean id="invoiceItemDao" 
+          class="org.cdms.domain.dao.InvoiceItemDaoImpl"> 
+        <property name="hibernateTemplate" ref="hibernateTemplate" /> 
+    </bean>     
+    
+    <bean id="productItemDao" 
+          class="org.cdms.domain.dao.ProductItemDaoImpl"> 
+        <property name="hibernateTemplate" ref="hibernateTemplate" /> 
+    </bean>     
 
     <!-- VALIDATION. Configure JSR-303 Validation -->
     
@@ -114,7 +121,6 @@
         <property name="customerDao" ref="customerDao" /> 
         <property name="validationHandler" ref="validationHandler" /> 
         <property name="exceptionHandler" ref="exceptionHandler" /> 
-        <!--property name="validator" ref="validator" /--> 
         
     </bean>
 
@@ -128,7 +134,22 @@
         <!--property name="validator" ref="validator" /--> 
         
     </bean>
-        
+    <!-- Configure InvoiceService implementation class -->
+    
+    <bean id="invoiceItemServiceImpl"
+          class="org.cdms.remoting.impl.InvoiceItemServiceImpl">
+        <property name="invoiceItemDao" ref="invoiceItemDao" /> 
+        <property name="validationHandler" ref="validationHandler" /> 
+        <property name="exceptionHandler" ref="exceptionHandler" /> 
+    </bean>
+
+    <bean id="productItemServiceImpl"
+          class="org.cdms.remoting.impl.ProductItemServiceImpl">
+        <property name="productItemDao" ref="productItemDao" /> 
+        <property name="validationHandler" ref="validationHandler" /> 
+        <property name="exceptionHandler" ref="exceptionHandler" /> 
+    </bean>
+                
     <!-- Configure AuthService implementation class -->
     
     <bean id="authServiceImpl"
@@ -136,14 +157,6 @@
         <!--property name="userService" ref="userServiceImpl" /--> 
     </bean>
     
-    <!-- Configure UserDetailsService implementation class.  -->
-    
-    <!--bean id="userDetailsServiceImpl"
-          class="org.cdms.auth.UserDetailsServiceImpl">
-        <property name="userService" ref="userServiceImpl" /> 
-    </bean-->
-    
-        
     <!-- Configure HessianServiceExporter for UserService  -->  
     
     <bean name="/UserService" 
@@ -169,7 +182,6 @@
             <ref bean="customerServiceImpl"/>
         </property>
         <property name="serviceInterface">
-            <!--value>org.cdms.domain.remoting.UserService</value-->
             <value>org.cdms.remoting.CustomerService</value>
         </property>
         <property name="registerTraceInterceptor">
@@ -194,6 +206,39 @@
         </property>
 
     </bean>
+    
+    <!-- Configure HessianServiceExporter for InvoiceItemService  -->  
+    
+    <bean name="/InvoiceItemService" 
+          class="org.springframework.remoting.caucho.HessianServiceExporter">
+        <property name="service">
+            <ref bean="invoiceItemServiceImpl"/>
+        </property>
+        <property name="serviceInterface">
+            <value>org.cdms.remoting.InvoiceItemService</value>
+        </property>
+        <property name="registerTraceInterceptor">
+            <value>false</value>
+        </property>
+
+    </bean>
+    
+
+    <!-- Configure HessianServiceExporter for ProductItemService  -->  
+    
+    <bean name="/ProductItemService" 
+          class="org.springframework.remoting.caucho.HessianServiceExporter">
+        <property name="service">
+            <ref bean="productItemServiceImpl"/>
+        </property>
+        <property name="serviceInterface">
+            <value>org.cdms.remoting.ProductItemService</value>
+        </property>
+        <property name="registerTraceInterceptor">
+            <value>false</value>
+        </property>
+
+    </bean>
 
     <!-- Configure HessianServiceExporter for AuthService  -->  
     
@@ -203,7 +248,6 @@
             <ref bean="authServiceImpl"/>
         </property>
         <property name="serviceInterface">
-            <!--value>org.cdms.domain.remoting.UserService</value-->
             <value>org.cdms.remoting.AuthService</value>
         </property>
         <property name="registerTraceInterceptor">
@@ -212,34 +256,6 @@
 
     </bean>
 
-    <!--bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="mappings">
-            <props>
-                <prop key="index.htm">indexController</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="viewResolver"
-          class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:prefix="/WEB-INF/jsp/"
-          p:suffix=".jsp" /-->
-
-    <!--
-    The index controller.
-    -->
-    <!--bean name="indexController"
-          class="org.springframework.web.servlet.mvc.ParameterizableViewController"
-          p:viewName="index" /-->
-                
-    <!--bean id="urlMapping" class=
-"org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="mappings">
-            <value>
-                /user.service=/UserService
-            </value>
-        </property>
-    </bean-->    
 
     <bean id="userDetailsServiceImpl"
           class="org.cdms.auth.UserDetailsServiceImpl">
