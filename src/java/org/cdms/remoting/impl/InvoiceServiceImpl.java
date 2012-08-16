@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.cdms.RemoteExceptionHandler;
 import org.cdms.domain.dao.InvoiceDao;
 import org.cdms.entities.Invoice;
+import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.Permission;
 import org.cdms.remoting.InvoiceService;
 import org.cdms.remoting.QueryPage;
@@ -117,6 +118,11 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
             result = entityDao.findByExample(r);
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
+        }
+        for ( Invoice invoice : queryPage.getQueryResult() ) {
+            for ( InvoiceItem invoiceItem : invoice.getInvoiceItems() ) {
+                invoiceItem.getProductItem().setStringPrice(invoiceItem.getProductItem().getPrice().toPlainString());
+            }
         }
         
         return result;

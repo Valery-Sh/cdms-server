@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.cdms.entities.Customer;
+import org.cdms.entities.Invoice;
 import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.ProductItem;
 import org.cdms.entities.User;
@@ -30,12 +31,12 @@ public class InvoiceItemDaoImpl extends HibernateDaoSupport implements InvoiceIt
     @Override
     @Transactional
     public InvoiceItem insert(InvoiceItem entity) {
-/*        User u = getHibernateTemplate().get(User.class,entity.getCreatedBy().getId());
-        entity.setCreatedBy(u);
-        entity.setCreatedAt(new Date());
-*/
+        Invoice invoice = getHibernateTemplate().get(Invoice.class,entity.getInvoice().getId());        
+        ProductItem productItem = getHibernateTemplate().get(ProductItem.class,entity.getProductItem().getId());        
+        entity.setInvoice(invoice);
+        entity.setProductItem(productItem);
         getHibernateTemplate().save(entity);
-//        getHibernateTemplate().initialize(entity.getCreatedBy());
+        //getHibernateTemplate().initialize(entity.getProductItem());
         return entity;
     }
     
@@ -53,6 +54,10 @@ public class InvoiceItemDaoImpl extends HibernateDaoSupport implements InvoiceIt
     public InvoiceItem delete(Long id) {
         InvoiceItem result = new InvoiceItem();
         InvoiceItem c = getHibernateTemplate().get(InvoiceItem.class, id);
+        if ( c != null ) {
+            getHibernateTemplate().delete(c);
+        }
+        
         return c;
     }
 

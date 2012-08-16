@@ -10,6 +10,7 @@ import java.util.List;
 import org.cdms.RemoteExceptionHandler;
 import org.cdms.domain.dao.InvoiceItemDao;
 import org.cdms.domain.dao.ProductItemDao;
+import org.cdms.entities.Invoice;
 import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.Permission;
 import org.cdms.entities.ProductItem;
@@ -23,13 +24,12 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
  *
  * @author Valery
  */
-public class InvoiceItemServiceImpl<E extends InvoiceItem>  implements InvoiceItemService<E> {
+public class InvoiceItemServiceImpl<E extends InvoiceItem> implements InvoiceItemService<E> {
 
     private InvoiceItemDao invoiceItemDao;
-
     private ValidationHandler validationHandler;
     private RemoteExceptionHandler exceptionHandler;
-    
+
     public InvoiceItemServiceImpl() {
     }
 
@@ -44,17 +44,16 @@ public class InvoiceItemServiceImpl<E extends InvoiceItem>  implements InvoiceIt
     public void setExceptionHandler(RemoteExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
-   
 
     @Override
     public E findById(long id) {
         E entity;
         try {
-            entity = (E)invoiceItemDao.findById(id);
+            entity = (E) invoiceItemDao.findById(id);
             entity.getProductItem().setStringPrice(entity.getProductItem().getPrice().toPlainString());
-        } catch(Exception e) {
+        } catch (Exception e) {
             entity = null;
-            exceptionHandler.throwDataAccessTranslated(e);        
+            exceptionHandler.throwDataAccessTranslated(e);
         }
         return entity;
     }
@@ -62,47 +61,75 @@ public class InvoiceItemServiceImpl<E extends InvoiceItem>  implements InvoiceIt
     @Override
     public E insert(E entity) {
         validationHandler.validate(entity);
-        entity.getProductItem().setPrice(new BigDecimal(entity.getProductItem().getStringPrice()));        
-        
+        //entity.getProductItem().setPrice(new BigDecimal(entity.getProductItem().getStringPrice()));
+
         E result = null;
         try {
-            result = (E)invoiceItemDao.insert(entity);
-        } catch(Exception e) {
-            exceptionHandler.throwDataAccessTranslated(e);        
+            entity.setId(null);
+            result = (E) invoiceItemDao.insert(entity);
+        } catch (Exception e) {
+            exceptionHandler.throwDataAccessTranslated(e);
+        }
+        if ( result != null ) {
+            result.getProductItem().getCreatedBy().setPermissions(null);
+            result.setInvoice(new Invoice(result.getInvoice().getId()));
+            result.getProductItem().setStringPrice(result.getProductItem().getPrice().toPlainString());
+        }
+        
+        return result;
+    }
+    /**
+     * Updates the the record in the database that is mapped to a 
+     * specified entity.
+     * The method completes the operation by calling the method 
+     * {@link org.cdms.domain.dao.InvoiceItemDaoImpl#update(org.cdms.entities.InvoiceItem) } .
+     * 
+     * @param entity
+     * @return a modified object of type <code>InvoiceItem</code>.
+     */
+    @Override
+    public E update(E entity) {
+        validationHandler.validate(entity);
+        // Fix BigDecimal field since hessian for doesn't treat this type correctly. 
+        entity.getProductItem().setPrice(new BigDecimal(entity.getProductItem().getStringPrice()));
+
+        E result = null;
+        try {
+            result = (E) invoiceItemDao.update(entity);
+            // Fix result due to Hessian cannot transfer Spring specific collections. 
+            if (result != null) {
+                Invoice inv = new Invoice(result.getInvoice().getId());
+                result.setInvoice(inv);
+                ProductItem pri = new ProductItem(result.getProductItem().getId());
+                result.setProductItem(pri);
+            }
+        } catch (Exception e) {
+            exceptionHandler.throwDataAccessTranslated(e);
         }
         return result;
     }
 
     @Override
-    public E update(E entity) {
-        validationHandler.validate(entity);
-        entity.getProductItem().setPrice(new BigDecimal(entity.getProductItem().getStringPrice()));        
-        
-        E result = null;
-        try {
-            result = (E)invoiceItemDao.update(entity);
-        } catch (Exception e) {
-           exceptionHandler.throwDataAccessTranslated(e);
-        }
-        return result;
-    }
-    @Override
     public E delete(E c) {
         return deleteById(c.getId());
-    }    
+    }
+
     @Override
     public E deleteById(Long id) {
         InvoiceItem result = null;
         try {
-            result = invoiceItemDao.delete(id); 
-        } catch(Exception e) {
-            exceptionHandler.throwDataAccessTranslated(e);        
+            result = invoiceItemDao.delete(id);
+        } catch (Exception e) {
+            exceptionHandler.throwDataAccessTranslated(e);
         }
-        if ( result == null ) {
+        if (result == null) {
             exceptionHandler.throwDeleteFailure(id, ProductItem.class.getName());
         }
-        return (E)result;
-    }    
+        result.setInvoice(new Invoice(result.getInvoice().getId()));
+        result.setProductItem(new ProductItem(result.getProductItem().getId()));
+        
+        return (E) result;
+    }
 
     @Override
     public QueryPage<E> findByExample(QueryPage<E> queryPage) {
@@ -110,17 +137,14 @@ public class InvoiceItemServiceImpl<E extends InvoiceItem>  implements InvoiceIt
         QueryPage r = queryPage;
         try {
             result = invoiceItemDao.findByExample(r);
-        } catch(Exception e) {
-            exceptionHandler.throwDataAccessTranslated(e);        
+        } catch (Exception e) {
+            exceptionHandler.throwDataAccessTranslated(e);
         }
-        for ( InvoiceItem it : queryPage.getQueryResult() ) {
+        for (InvoiceItem it : queryPage.getQueryResult()) {
             it.getProductItem().setStringPrice(it.getProductItem().getPrice().toPlainString());
         }
-        
+
         return result;
 
     }
-
-
-    
 }
