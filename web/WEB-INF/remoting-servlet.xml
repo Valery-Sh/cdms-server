@@ -84,6 +84,11 @@
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
 
+    <bean id="invoiceStatisticsDao" 
+          class="org.cdms.domain.dao.InvoiceStatisticsDaoImpl"> 
+        <property name="hibernateTemplate" ref="hibernateTemplate" /> 
+    </bean>     
+
     <!-- VALIDATION. Configure JSR-303 Validation -->
     
     <bean id="validatorFactory" class="javax.validation.Validation"
@@ -134,6 +139,7 @@
         <!--property name="validator" ref="validator" /--> 
         
     </bean>
+    
     <!-- Configure InvoiceService implementation class -->
     
     <bean id="invoiceItemServiceImpl"
@@ -147,6 +153,12 @@
           class="org.cdms.remoting.impl.ProductItemServiceImpl">
         <property name="productItemDao" ref="productItemDao" /> 
         <property name="validationHandler" ref="validationHandler" /> 
+        <property name="exceptionHandler" ref="exceptionHandler" /> 
+    </bean>
+    
+    <bean id="invoiceStatisticsServiceImpl"
+          class="org.cdms.remoting.impl.InvoiceStatisticsServiceImpl">
+        <property name="invoiceStatisticsDao" ref="invoiceStatisticsDao" /> 
         <property name="exceptionHandler" ref="exceptionHandler" /> 
     </bean>
                 
@@ -233,6 +245,20 @@
         </property>
         <property name="serviceInterface">
             <value>org.cdms.remoting.ProductItemService</value>
+        </property>
+        <property name="registerTraceInterceptor">
+            <value>false</value>
+        </property>
+
+    </bean>
+
+    <bean name="/InvoiceStatisticsService" 
+          class="org.springframework.remoting.caucho.HessianServiceExporter">
+        <property name="service">
+            <ref bean="invoiceStatisticsServiceImpl"/>
+        </property>
+        <property name="serviceInterface">
+            <value>org.cdms.remoting.InvoiceStatisticsService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>

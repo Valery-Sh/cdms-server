@@ -1,24 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.cdms.remoting.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import org.cdms.RemoteExceptionHandler;
 import org.cdms.domain.dao.InvoiceItemDao;
-import org.cdms.domain.dao.ProductItemDao;
 import org.cdms.entities.Invoice;
 import org.cdms.entities.InvoiceItem;
-import org.cdms.entities.Permission;
 import org.cdms.entities.ProductItem;
 import org.cdms.remoting.InvoiceItemService;
-import org.cdms.remoting.ProductItemService;
 import org.cdms.remoting.QueryPage;
 import org.cdms.remoting.validation.ValidationHandler;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 /**
  *
