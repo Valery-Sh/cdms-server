@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.cdms.remoting.impl;
 
 import org.cdms.domain.dao.RemoteExceptionHandler;
@@ -9,7 +5,6 @@ import org.cdms.domain.dao.UserDao;
 import org.cdms.entities.User;
 import org.cdms.remoting.UserService;
 import org.cdms.remoting.validation.ValidationHandler;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 /**
  *
@@ -46,9 +41,6 @@ public class UserServiceImpl implements UserService {
             user = null;
             exceptionHandler.throwDataAccessTranslated(e);        
         }
-//org.springframework.remoting.caucho.HessianServiceExporter e;
-
-        //user = userDao.findById(id);
         return user;
     }
 
@@ -65,17 +57,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(User user) {
         validationHandler.validate(user);
-        //Authentication a = SecurityContextHolder.getContext().getAuthentication();
         try {
             userDao.update(user);
         } catch (Exception e) {
-            
-           if ( e instanceof HibernateOptimisticLockingFailureException) {
-             HibernateOptimisticLockingFailureException ee = (HibernateOptimisticLockingFailureException)e;
-             System.out.println("SERVER ERROR PUT " + e.getMessage() + "; class=" + e.getClass()); 
-             System.out.println("---- className" + ee.getPersistentClassName()); 
-             System.out.println("---- identifier" + ee.getIdentifier());              
-           }
            exceptionHandler.throwDataAccessTranslated(e);
         }
     }
@@ -96,7 +80,6 @@ public class UserServiceImpl implements UserService {
         } catch(Exception e) {
             user = null;
             // Dont'throw exception since the method is used internally
-            // exceptionHandler.throwDataAccessTranslated(e);        
         }
         return user;
         

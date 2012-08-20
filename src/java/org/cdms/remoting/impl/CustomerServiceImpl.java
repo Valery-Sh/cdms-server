@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.cdms.remoting.impl;
 
 import java.util.ArrayList;
@@ -16,7 +12,7 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class CustomerServiceImpl<E extends Customer>  implements CustomerService<E> {
 
@@ -82,13 +78,6 @@ public class CustomerServiceImpl<E extends Customer>  implements CustomerService
             }
 
         } catch (Exception e) {
-            
-           if ( e instanceof HibernateOptimisticLockingFailureException) {
-             HibernateOptimisticLockingFailureException ee = (HibernateOptimisticLockingFailureException)e;
-             System.out.println("SERVER ERROR PUT " + e.getMessage() + "; class=" + e.getClass()); 
-             System.out.println("---- className" + ee.getPersistentClassName()); 
-             System.out.println("---- identifier" + ee.getIdentifier());              
-           }
            exceptionHandler.throwDataAccessTranslated(e);
         }
         return result;

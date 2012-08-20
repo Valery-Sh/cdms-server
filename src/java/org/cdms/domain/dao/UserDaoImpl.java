@@ -41,7 +41,6 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
     public User findById(Long id) {
         User user = (User) getHibernateTemplate().get(User.class, id);
         if ( user != null ) {
-            
             getHibernateTemplate().initialize(user.getPermissions());
         }
         if ( user != null && user.getPermissions() != null && ! user.getPermissions().isEmpty() ) {
@@ -51,7 +50,11 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
         }
         return user;
     }
-    
+    /**
+     *  The method is used when authenticate.
+     * @param userName 
+     * @return 
+     */
     @Transactional(readOnly=true)
     @Override
     public User findByUsername(String userName) {
@@ -76,12 +79,6 @@ public class UserDaoImpl  extends HibernateDaoSupport implements UserDao {
     @Override
     @Transactional(readOnly=true)
     public List<User> findAll() {
-        //PageListHolder p;
-        //getHibernateTemplate().f
-        //Criteria c = new DetachedCriteria();
-        //Session s;
-        //DetachedCriteria d;
         return null;
-        
     }
 }

@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.cdms.domain.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.cdms.entities.Customer;
 import org.cdms.entities.ProductItem;
 import org.cdms.entities.User;
 import org.cdms.remoting.QueryPage;
@@ -21,14 +16,21 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
- * @author Valery
+ * Provides methods to perform the search, insert, update and delete 
+ * records from the database using the Hibernate DAO Support API.
+ * 
+ * @author V. Shyshkin
  */
-public class ProductItemDaoImpl extends HibernateDaoSupport implements ProductItemDao{
-    
+public class ProductItemDaoImpl<E extends ProductItem> extends HibernateDaoSupport implements EntityDao<E>{
+    /**
+     * Inserts the specified entity of type <code>ProductItem</code> into the database.
+     * @param entity the entity to be inserted. 
+     * @return the inserted entity of type <code>ProductItem</code>. 
+     * @see org.cdms.entities.ProductItem
+     */
     @Override
     @Transactional
-    public ProductItem insert(ProductItem entity) {
+    public E insert(E entity) {
         User u = getHibernateTemplate().get(User.class,entity.getCreatedBy().getId());
         entity.setCreatedBy(u);
         entity.setCreatedAt(new Date());
@@ -37,24 +39,34 @@ public class ProductItemDaoImpl extends HibernateDaoSupport implements ProductIt
         getHibernateTemplate().initialize(entity.getCreatedBy());
         return entity;
     }
-    
+    /**
+     * Updates the specified entity of type <code>ProductItem</code>.
+     * @param entity the entity to be updates. 
+     * @return the updated entity of type <code>ProductItem</code>. 
+     * @see org.cdms.entities.ProductItem
+     */
     @Override
     @Transactional
-    public ProductItem update(ProductItem entity) {
-        getHibernateTemplate().get(ProductItem.class,entity.getId());
-        ProductItem c = getHibernateTemplate().merge(entity);
+    public E update(E entity) {
+        getHibernateTemplate().get(entity.getClass(),entity.getId());
+        E c = getHibernateTemplate().merge(entity);
         if ( c != null ) {
             getHibernateTemplate().initialize(c.getCreatedBy());
         }
         return c;
     }
 
-
+    /**
+     * Deletes the entity with the specified <code>identifier</code>.
+     * @param id the id of the entity to be deleted. 
+     * @return the deleted entity of type <code>ProductItem</code>. 
+     * @see org.cdms.entities.ProductItem
+     */
     @Override
     @Transactional
-    public ProductItem delete(Long id) {
-        ProductItem result = new ProductItem();
-        ProductItem c = getHibernateTemplate().get(ProductItem.class, id);
+    public E delete(Long id) {
+        E result = (E)new ProductItem();
+        E c = (E)getHibernateTemplate().get(ProductItem.class, id);
         if ( c != null ) {
             User u = c.getCreatedBy();
             getHibernateTemplate().delete(c);
@@ -63,24 +75,29 @@ public class ProductItemDaoImpl extends HibernateDaoSupport implements ProductIt
         
         return c;
     }
-
+    /**
+     * Executes query to retrieve the entity with the specified <code>identifier</code>.
+     * @param id  the identifier of the entity to search for. 
+     * @return the found entity of type <code>ProductItem</code>. 
+     * @see org.cdms.entities.ProductItem
+     */
     @Override
     @Transactional(readOnly=true)
-    public ProductItem findById(Long id) {
-        ProductItem entity = (ProductItem) getHibernateTemplate().get(ProductItem.class, id);
+    public E findById(Long id) {
+        E entity = (E) getHibernateTemplate().get(ProductItem.class, id);
         return entity;
     }
     
 
-    protected DetachedCriteria buildCriteriaByExample(QueryPage<ProductItem> queryPage) {
-        ProductItem sample = queryPage.getEntityAsExample();
+    protected DetachedCriteria buildCriteriaByExample(QueryPage<E> queryPage) {
+        E sample = queryPage.getEntityAsExample();
         Criterion c = CdmsCriteriaExample.createEx(queryPage.getEntityAsExample())
                 .enableLike(MatchMode.ANYWHERE)
                 .excludeProperty("id")
                 .excludeProperty("idFilter")                
                 .excludeProperty("createdAt")
                 .excludeProperty("version");
-        DetachedCriteria productItemCr = DetachedCriteria.forClass(ProductItem.class);
+        DetachedCriteria productItemCr = DetachedCriteria.forClass(sample.getClass());
         productItemCr.add(c);
         if ( sample.getIdFilter() != null) {
             productItemCr.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
@@ -95,11 +112,30 @@ public class ProductItemDaoImpl extends HibernateDaoSupport implements ProductIt
         }
         return productItemCr;
     }
+    /**
+     * Executes a query and stores results into the given object 
+     * of type <code>QueryPage</code>. based for entities of type <code>ProductItem</code> by the given
+     * The method builds query using Hibernate Criteria API. 
+     * The <code>queryPage</code> contains properties such as <code>pageNo</code>
+     * and <code>pageSize</code>. Thus the query retrieves only the records that 
+     * correspond to the single page.
+     * The result of the query is a collection of type <code>java.util.List</code>.
+     * The method stores the results into the <code>queryPage</code>. 
+     * In addition to the main result the method retrieves the number of rows
+     * and stores it into property <code>rowCount</code> 
+     * of the <code>queryPage</code>.
+     * 
+     * @param queryPage the object that contains the query parameters, paging parameters
+     *    and a collection to store query results
+     * @return the object of type <code>QueryPage</code>
+     * @see org.cdms.entities.ProductItem
+     * @see org.cdms.remoting.QueryPage
+     */
+    
     @Override
     @Transactional(readOnly=true)    
-    public QueryPage<ProductItem> findByExample(QueryPage<ProductItem> queryPage) {
+    public QueryPage<E> findByExample(QueryPage<E> queryPage) {
         DetachedCriteria productItemCr = buildCriteriaByExample(queryPage);
-        ProductItem sample = queryPage.getEntityAsExample();
         
         productItemCr.setProjection(Projections.rowCount());
         List rowCountList = getHibernateTemplate().findByCriteria(productItemCr);
@@ -111,8 +147,8 @@ public class ProductItemDaoImpl extends HibernateDaoSupport implements ProductIt
         productItemCr.addOrder(Order.asc("id"));
         int firstRec = queryPage.getPageNo() * queryPage.getPageSize();
 
-        List<ProductItem> items = (List<ProductItem>) getHibernateTemplate().findByCriteria(productItemCr,firstRec,queryPage.getPageSize());        
-        for ( ProductItem item : items) {
+        List<E> items = (List<E>) getHibernateTemplate().findByCriteria(productItemCr,firstRec,queryPage.getPageSize());        
+        for ( E item : items) {
             item.getCreatedBy().setPermissions(new ArrayList());
             item.getCreatedBy().setPassword(null);
         }

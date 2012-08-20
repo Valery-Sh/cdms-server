@@ -3,7 +3,6 @@ package org.cdms.remoting.impl;
 import java.math.BigDecimal;
 import org.cdms.domain.dao.EntityDao;
 import org.cdms.domain.dao.RemoteExceptionHandler;
-import org.cdms.domain.dao.InvoiceItemDao;
 import org.cdms.entities.Invoice;
 import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.ProductItem;
@@ -13,7 +12,7 @@ import org.cdms.remoting.validation.ValidationHandler;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class InvoiceItemServiceImpl<E extends InvoiceItem> implements InvoiceItemService<E> {
 
@@ -52,7 +51,6 @@ public class InvoiceItemServiceImpl<E extends InvoiceItem> implements InvoiceIte
     @Override
     public E insert(E entity) {
         validationHandler.validate(entity);
-        //entity.getProductItem().setPrice(new BigDecimal(entity.getProductItem().getStringPrice()));
 
         E result = null;
         try {

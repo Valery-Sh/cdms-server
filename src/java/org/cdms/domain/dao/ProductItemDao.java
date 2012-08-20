@@ -11,10 +11,5 @@ import org.cdms.remoting.QueryPage;
  *
  * @author Valery
  */
-public interface ProductItemDao {
-    ProductItem insert(ProductItem entity); 
-    ProductItem update(ProductItem entity); 
-    ProductItem delete(Long id); 
-    ProductItem findById(Long id); 
-    QueryPage<ProductItem> findByExample(QueryPage<ProductItem> queryPage);
+public interface ProductItemDao<E extends ProductItem> extends EntityDao<E> { 
 }

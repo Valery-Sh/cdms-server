@@ -41,7 +41,7 @@ public class InvoiceItemDaoImpl<E extends InvoiceItem> extends HibernateDaoSuppo
      * Updates the specified entity of type <code>InvoiceItem</code>.
      * @param entity the entity to be updates. 
      * @return the updated entity of type <code>InvoiceItem</code>. 
-     * @see org.cdms.entities.Invoice
+     * @see org.cdms.entities.InvoiceItem
      */
     @Override
     @Transactional
@@ -72,7 +72,7 @@ public class InvoiceItemDaoImpl<E extends InvoiceItem> extends HibernateDaoSuppo
      * Executes query to retrieve the entity with the specified <code>identifier</code>.
      * @param id  the identifier of the entity to search for. 
      * @return the found entity of type <code>InvoiceItem</code>. 
-     * @see org.cdms.entities.Invoice
+     * @see org.cdms.entities.InvoiceItem
      */
     @Override
     @Transactional(readOnly=true)
@@ -89,7 +89,7 @@ public class InvoiceItemDaoImpl<E extends InvoiceItem> extends HibernateDaoSuppo
                 .excludeProperty("id")
                 .excludeProperty("idFilter")                
                 .excludeProperty("version");
-        DetachedCriteria invoiceItemCr = DetachedCriteria.forClass(ProductItem.class);
+        DetachedCriteria invoiceItemCr = DetachedCriteria.forClass(sample.getClass());
         invoiceItemCr.add(c);
         if ( sample.getIdFilter() != null) {
             invoiceItemCr.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
@@ -119,7 +119,6 @@ public class InvoiceItemDaoImpl<E extends InvoiceItem> extends HibernateDaoSuppo
     @Transactional(readOnly=true)    
     public QueryPage<E> findByExample(QueryPage<E> queryPage) {
         DetachedCriteria invoiceItemCr = buildCriteriaByExample(queryPage);
-        InvoiceItem sample = queryPage.getEntityAsExample();
         
         invoiceItemCr.setProjection(Projections.rowCount());
         List rowCountList = getHibernateTemplate().findByCriteria(invoiceItemCr);

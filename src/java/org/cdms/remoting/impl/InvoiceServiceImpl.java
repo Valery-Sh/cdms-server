@@ -4,7 +4,6 @@ package org.cdms.remoting.impl;
 import java.util.ArrayList;
 import org.cdms.domain.dao.EntityDao;
 import org.cdms.domain.dao.RemoteExceptionHandler;
-import org.cdms.domain.dao.InvoiceDao;
 import org.cdms.entities.Invoice;
 import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.Permission;
@@ -14,7 +13,7 @@ import org.cdms.remoting.validation.ValidationHandler;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E> {
 

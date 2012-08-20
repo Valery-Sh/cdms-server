@@ -102,7 +102,7 @@ public class CustomerDaoImpl<E extends Customer> extends HibernateDaoSupport imp
                 .excludeProperty("idFilter")                
                 .excludeProperty("createdAt")
                 .excludeProperty("version");
-        DetachedCriteria customerCr = DetachedCriteria.forClass(Customer.class);
+        DetachedCriteria customerCr = DetachedCriteria.forClass(sample.getClass());
         customerCr.add(c);
         if ( sample.getIdFilter() != null) {
             customerCr.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
@@ -150,7 +150,6 @@ public class CustomerDaoImpl<E extends Customer> extends HibernateDaoSupport imp
     @Transactional(readOnly=true)    
     public QueryPage<E> findByExample(QueryPage<E> queryPage) {
         DetachedCriteria customerCr = buildCriteriaByExample(queryPage);
-        E sample = queryPage.getEntityAsExample();
         
         customerCr.setProjection(Projections.rowCount());
         List rowCountList = getHibernateTemplate().findByCriteria(customerCr);

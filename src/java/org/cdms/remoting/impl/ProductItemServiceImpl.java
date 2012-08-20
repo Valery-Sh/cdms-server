@@ -1,12 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.cdms.remoting.impl;
 
 import java.util.ArrayList;
+import org.cdms.domain.dao.EntityDao;
 import org.cdms.domain.dao.RemoteExceptionHandler;
-import org.cdms.domain.dao.ProductItemDao;
 import org.cdms.entities.Permission;
 import org.cdms.entities.ProductItem;
 import org.cdms.remoting.ProductItemService;
@@ -16,11 +12,11 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class ProductItemServiceImpl<E extends ProductItem>  implements ProductItemService<E> {
 
-    private ProductItemDao productItemDao;
+    private EntityDao productItemDao;
 
     private ValidationHandler validationHandler;
     private RemoteExceptionHandler exceptionHandler;
@@ -28,7 +24,7 @@ public class ProductItemServiceImpl<E extends ProductItem>  implements ProductIt
     public ProductItemServiceImpl() {
     }
 
-    public void setProductItemDao(ProductItemDao dao) {
+    public void setProductItemDao(EntityDao dao) {
         this.productItemDao = dao;
     }
 
@@ -81,13 +77,6 @@ public class ProductItemServiceImpl<E extends ProductItem>  implements ProductIt
             }
 
         } catch (Exception e) {
-            
-           if ( e instanceof HibernateOptimisticLockingFailureException) {
-             HibernateOptimisticLockingFailureException ee = (HibernateOptimisticLockingFailureException)e;
-             System.out.println("SERVER ERROR PUT " + e.getMessage() + "; class=" + e.getClass()); 
-             System.out.println("---- className" + ee.getPersistentClassName()); 
-             System.out.println("---- identifier" + ee.getIdentifier());              
-           }
            exceptionHandler.throwDataAccessTranslated(e);
         }
         return result;
@@ -98,9 +87,9 @@ public class ProductItemServiceImpl<E extends ProductItem>  implements ProductIt
     }    
     @Override
     public E deleteById(Long id) {
-        ProductItem result = null;
+        E result = null;
         try {
-            result = productItemDao.delete(id); 
+            result = (E)productItemDao.delete(id); 
             if ( result != null ) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());
@@ -112,7 +101,7 @@ public class ProductItemServiceImpl<E extends ProductItem>  implements ProductIt
         if ( result == null ) {
             exceptionHandler.throwDeleteFailure(id, ProductItem.class.getName());
         }
-        return (E)result;
+        return result;
     }    
 
     @Override
@@ -124,7 +113,7 @@ public class ProductItemServiceImpl<E extends ProductItem>  implements ProductIt
         } catch(Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);        
         }
-        for ( ProductItem it :queryPage.getQueryResult() ) {
+        for ( E it :queryPage.getQueryResult() ) {
             it.setStringPrice(it.getPrice().toPlainString());
         }
         
