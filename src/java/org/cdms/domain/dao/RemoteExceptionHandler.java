@@ -1,4 +1,4 @@
-package org.cdms;
+package org.cdms.domain.dao;
 
 import org.cdms.remoting.exception.RemoteDataAccessException;
 import org.springframework.orm.hibernate3.HibernateJdbcException;
@@ -57,10 +57,10 @@ public class RemoteExceptionHandler {
         throw re;
     }
     
-    public void throwAuthTranslated(Exception e) {
+/*    public void throwAuthTranslated(Exception e) {
         RemoteAuthenticationException re = new RemoteAuthenticationException(e.getMessage());
         re.setOriginalClassName(e.getClass().getName());
         throw re;
     }
-    
+*/    
 }

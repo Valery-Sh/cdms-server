@@ -8,17 +8,23 @@ import org.hibernate.criterion.Example;
 import org.hibernate.type.Type;
 
 /**
- * Support for query by example.
+ * The convenient class to support for query by example.
  * Introduces a {@link #NOT_NULL_OR_ZERO_OR_EMPTY} of type 
  * <code>PropertySelector</code> implementation that allows
- * exclude string properties that contain  empty values.
- * The class allows create
+ * exclude string properties that contain  null or empty values.
+ * 
  * @author V. Shyshkin
  */
 public class CdmsCriteriaExample extends Example {
     
     protected static final PropertySelector NOT_NULL_OR_ZERO_OR_EMPTY = new NotNullOrZeroOrEmptyPropertySelector();
     
+    /**
+     * Create a new instance for the given entity object and the object 
+     * of type <code>PropertySelector</code>.
+     * @param entity the object that is used as an example
+     * @param selector the property selector instance
+     */
     protected CdmsCriteriaExample(Object entity, PropertySelector selector) {
         super(entity, selector);
     }
@@ -27,7 +33,7 @@ public class CdmsCriteriaExample extends Example {
      * Create a new instance, which doesn't include  
      * <code>null,zero (Numbers)</code> or <code>empty</code> strings.
      *
-     * @param entity
+     * @param entity the object that is used as an example
      * @return a new instance of <tt>CdmsCriteriaExample</tt>
      */
     public static Example createEx(Object entity) {
@@ -46,7 +52,7 @@ public class CdmsCriteriaExample extends Example {
     }
 
     public static final class NotNullOrZeroOrEmptyPropertySelector implements PropertySelector {
-
+        
         @Override
         public boolean include(Object object, String propertyName, Type type) {
                 if ( object == null ) {

@@ -107,7 +107,7 @@
         
     <!-- Default Exception Handler  -->
       
-    <bean id="exceptionHandler" class="org.cdms.RemoteExceptionHandler"/>    
+    <bean id="exceptionHandler" class="org.cdms.domain.dao.RemoteExceptionHandler"/>    
     
     <!-- Configure UserService implementation class -->
     
@@ -290,8 +290,8 @@
     
 
     <security:http>
-        <security:intercept-url pattern="/**" requires-channel="http"/>
-        <security:http-basic/> 
+        <security:intercept-url access="ROLE_USER" pattern="/**" requires-channel="http"/>
+        <security:http-basic /> 
     </security:http>
 
     <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">

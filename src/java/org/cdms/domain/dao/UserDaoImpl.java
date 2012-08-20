@@ -3,9 +3,6 @@ package org.cdms.domain.dao;
 import java.util.ArrayList;
 import java.util.List;
 import org.cdms.entities.User;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 

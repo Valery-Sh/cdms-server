@@ -43,12 +43,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (u == null) {
             return null;
         }
+        byte[] b;
         
         List<GrantedAuthority> permissions = new ArrayList<GrantedAuthority>();
         for ( Permission p : u.getPermissions() ) {
             permissions.add(new SimpleGrantedAuthority(p.getPermission()));
         }
-    
+        permissions.add(new SimpleGrantedAuthority("ROLE_USER"));
         AuthenticatedUser au = new AuthenticatedUser(u.getId(),userName, u.getPassword(), permissions);
         
         au.setFirstName(u.getFirstName());

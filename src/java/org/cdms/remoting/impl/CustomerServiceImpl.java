@@ -5,8 +5,8 @@
 package org.cdms.remoting.impl;
 
 import java.util.ArrayList;
-import org.cdms.RemoteExceptionHandler;
-import org.cdms.domain.dao.CustomerDao;
+import org.cdms.domain.dao.EntityDao;
+import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.entities.Customer;
 import org.cdms.entities.Permission;
 import org.cdms.remoting.CustomerService;
@@ -20,7 +20,7 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
  */
 public class CustomerServiceImpl<E extends Customer>  implements CustomerService<E> {
 
-    private CustomerDao customerDao;
+    private EntityDao<E> customerDao;
 
     private ValidationHandler validationHandler;
     private RemoteExceptionHandler exceptionHandler;
@@ -28,7 +28,7 @@ public class CustomerServiceImpl<E extends Customer>  implements CustomerService
     public CustomerServiceImpl() {
     }
 
-    public void setCustomerDao(CustomerDao dao) {
+    public void setCustomerDao(EntityDao<E> dao) {
         this.customerDao = dao;
     }
 
@@ -41,7 +41,6 @@ public class CustomerServiceImpl<E extends Customer>  implements CustomerService
     }
    
 
-    @Override
     public E findById(long id) {
         E customer;
         try {
@@ -100,9 +99,9 @@ public class CustomerServiceImpl<E extends Customer>  implements CustomerService
     }    
     @Override
     public E deleteById(Long id) {
-        Customer result = null;
+        E result = null;
         try {
-            result = customerDao.delete(id); 
+            result = (E)customerDao.delete(id); 
             if ( result != null ) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());

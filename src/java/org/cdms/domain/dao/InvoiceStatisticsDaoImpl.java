@@ -24,9 +24,9 @@ public class InvoiceStatisticsDaoImpl extends HibernateDaoSupport implements Inv
     public QueryPage<InvoiceStatView> requestInvoice(QueryPage<InvoiceStatView> queryPage) {
         String whereCond = ""; // empty string when both startDate and endDate 
                                // are equal to nullused 
-        Long customerId = (Long)queryPage.getParam()[0];
-        Date startDate = (Date)queryPage.getParam()[1];
-        Date endDate   = (Date)queryPage.getParam()[2];     
+        Long customerId = (Long)queryPage.getParams()[0];
+        Date startDate = (Date)queryPage.getParams()[1];
+        Date endDate   = (Date)queryPage.getParams()[2];     
 //        Date q_endDate = endDate;
         
         Date[] params = new Date[] {};
@@ -125,9 +125,9 @@ public class InvoiceStatisticsDaoImpl extends HibernateDaoSupport implements Inv
     public QueryPage<InvoiceStatView> requestInvoiceOld(QueryPage<InvoiceStatView> queryPage) {
         String whereCondCount = ""; // to calculate row count
         String whereCond = "";
-        Long customerId = (Long)queryPage.getParam()[0];
-        Date startDate = (Date)queryPage.getParam()[1];
-        Date endDate   = (Date)queryPage.getParam()[2];     
+        Long customerId = (Long)queryPage.getParams()[0];
+        Date startDate = (Date)queryPage.getParams()[1];
+        Date endDate   = (Date)queryPage.getParams()[2];     
         Date q_endDate = endDate;
         Date[] params = new Date[] {startDate, endDate};
         String clientCond = "";

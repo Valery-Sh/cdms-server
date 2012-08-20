@@ -2,7 +2,8 @@
 package org.cdms.remoting.impl;
 
 import java.util.ArrayList;
-import org.cdms.RemoteExceptionHandler;
+import org.cdms.domain.dao.EntityDao;
+import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.domain.dao.InvoiceDao;
 import org.cdms.entities.Invoice;
 import org.cdms.entities.InvoiceItem;
@@ -17,7 +18,7 @@ import org.cdms.remoting.validation.ValidationHandler;
  */
 public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E> {
 
-    private InvoiceDao entityDao;
+    private EntityDao entityDao;
 
     private ValidationHandler validationHandler;
     private RemoteExceptionHandler exceptionHandler;
@@ -25,7 +26,7 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     public InvoiceServiceImpl() {
     }
 
-    public void setInvoiceDao(InvoiceDao dao) {
+    public void setInvoiceDao(EntityDao dao) {
         this.entityDao = dao;
     }
 
@@ -36,9 +37,6 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     public void setExceptionHandler(RemoteExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
-   
-
-    @Override
     public E findById(long id) {
         E entity;
         try {
@@ -92,7 +90,7 @@ public class InvoiceServiceImpl<E extends Invoice>  implements InvoiceService<E>
     public E deleteById(Long id) {
         Invoice result = null;
         try {
-            result = entityDao.delete(id); 
+            result = (E)entityDao.delete(id); 
             if ( result != null ) {
                 result.getCreatedBy().setPassword(null); // not null !!!
                 result.getCreatedBy().setPermissions(new ArrayList<Permission>());

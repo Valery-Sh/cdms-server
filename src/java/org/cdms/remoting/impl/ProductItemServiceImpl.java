@@ -5,10 +5,8 @@
 package org.cdms.remoting.impl;
 
 import java.util.ArrayList;
-import java.util.List;
-import org.cdms.RemoteExceptionHandler;
+import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.domain.dao.ProductItemDao;
-import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.Permission;
 import org.cdms.entities.ProductItem;
 import org.cdms.remoting.ProductItemService;
@@ -42,8 +40,6 @@ public class ProductItemServiceImpl<E extends ProductItem>  implements ProductIt
         this.exceptionHandler = exceptionHandler;
     }
    
-
-    @Override
     public E findById(long id) {
         E entity;
         try {

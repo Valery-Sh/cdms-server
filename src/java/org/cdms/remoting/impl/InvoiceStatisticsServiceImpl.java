@@ -3,7 +3,7 @@ package org.cdms.remoting.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.cdms.RemoteExceptionHandler;
+import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.domain.dao.InvoiceStatisticsDao;
 import org.cdms.entities.InvoiceStatView;
 import org.cdms.remoting.InvoiceStatisticsService;

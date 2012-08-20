@@ -1,7 +1,8 @@
 package org.cdms.remoting.impl;
 
 import java.math.BigDecimal;
-import org.cdms.RemoteExceptionHandler;
+import org.cdms.domain.dao.EntityDao;
+import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.domain.dao.InvoiceItemDao;
 import org.cdms.entities.Invoice;
 import org.cdms.entities.InvoiceItem;
@@ -16,14 +17,14 @@ import org.cdms.remoting.validation.ValidationHandler;
  */
 public class InvoiceItemServiceImpl<E extends InvoiceItem> implements InvoiceItemService<E> {
 
-    private InvoiceItemDao invoiceItemDao;
+    private EntityDao invoiceItemDao;
     private ValidationHandler validationHandler;
     private RemoteExceptionHandler exceptionHandler;
 
     public InvoiceItemServiceImpl() {
     }
 
-    public void setInvoiceItemDao(InvoiceItemDao dao) {
+    public void setInvoiceItemDao(EntityDao dao) {
         this.invoiceItemDao = dao;
     }
 
@@ -35,7 +36,7 @@ public class InvoiceItemServiceImpl<E extends InvoiceItem> implements InvoiceIte
         this.exceptionHandler = exceptionHandler;
     }
 
-    @Override
+
     public E findById(long id) {
         E entity;
         try {
@@ -108,7 +109,7 @@ public class InvoiceItemServiceImpl<E extends InvoiceItem> implements InvoiceIte
     public E deleteById(Long id) {
         InvoiceItem result = null;
         try {
-            result = invoiceItemDao.delete(id);
+            result = (E)invoiceItemDao.delete(id);
         } catch (Exception e) {
             exceptionHandler.throwDataAccessTranslated(e);
         }

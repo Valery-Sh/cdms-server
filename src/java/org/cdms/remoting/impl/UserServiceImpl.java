@@ -4,7 +4,7 @@
  */
 package org.cdms.remoting.impl;
 
-import org.cdms.RemoteExceptionHandler;
+import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.domain.dao.UserDao;
 import org.cdms.entities.User;
 import org.cdms.remoting.UserService;

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.cdms.domain.dao;
 
 import java.util.ArrayList;
@@ -20,120 +16,86 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
- * @author Valery
+ * Provides methods to perform the search, insert, update and delete 
+ * records from the database using the Hibernate DAO Support API.
+ * 
+ * @author V. Shyshkin
  */
-public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
-    
+public class CustomerDaoImpl<E extends Customer> extends HibernateDaoSupport implements EntityDao<E>{
+    /**
+     * Inserts the specified entity of type <code>Customer</code> into the database.
+     * @param entity the entity to be inserted. 
+     * @return the inserted entity of type <code>Customer</code>. 
+     * @see org.cdms.entities.Customer
+     */
     @Override
     @Transactional
-    public Customer insert(Customer customer) {
-        User u = getHibernateTemplate().get(User.class,customer.getCreatedBy().getId());
-        customer.setCreatedBy(u);
-        customer.setCreatedAt(new Date());
+    public E insert(E entity) {
+        User u = getHibernateTemplate().get(User.class,entity.getCreatedBy().getId());
+        entity.setCreatedBy(u);
+        entity.setCreatedAt(new Date());
 
-        getHibernateTemplate().save(customer);
-        getHibernateTemplate().initialize(customer.getCreatedBy());
-        return customer;
+        getHibernateTemplate().save(entity);
+        getHibernateTemplate().initialize(entity.getCreatedBy());
+        return entity;
     }
-    
+
+    /**
+     * Updates the specified entity of type <code>Customer</code>.
+     * @param entity the entity to be updates. 
+     * @return the updated entity of type <code>Customer</code>. 
+     * @see org.cdms.entities.Customer
+     */
     @Override
     @Transactional
-    public Customer update(Customer customer) {
-        getHibernateTemplate().get(Customer.class,customer.getId());
-        Customer c = getHibernateTemplate().merge(customer);
+    public E update(E entity) {
+        //getHibernateTemplate().get(Customer.class,customer.getId());
+        getHibernateTemplate().get(entity.getClass(),entity.getId());
+        E c = getHibernateTemplate().merge(entity);
         if ( c != null ) {
             getHibernateTemplate().initialize(c.getCreatedBy());
         }
-        return c;
+        return (E)c;
     }
 
-
+    /**
+     * Deletes the entity with the specified <code>identifier</code>.
+     * @param id the id of the entity to be deleted. 
+     * @return the deleted entity of type <code>Customer</code>. 
+     * @see org.cdms.entities.Customer
+     */
     @Override
     @Transactional
-    public Customer delete(Long id) {
-        Customer result = new Customer();
-        Customer c = getHibernateTemplate().get(Customer.class, id);
+    public E delete(Long id) {
+        E result = (E)new Customer();
+        E c = (E)getHibernateTemplate().get(Customer.class, id);
         if ( c != null ) {
             User u = c.getCreatedBy();
-        //result = getHibernateTemplate().merge(result);
             getHibernateTemplate().delete(c);
             getHibernateTemplate().initialize(c.getCreatedBy());
-            //u.setPermissions(new ArrayList());
-            //u.setPassword("");
-            //c.setCreatedBy(u);
         }
         
         return c;
     }
-
+    /**
+     * Executes query to retrieve the entity with the specified <code>identifier</code>.
+     * @param id  the identifier of the entity to search for. 
+     * @return the found entity of type <code>Customer</code>. 
+     * @see org.cdms.entities.Customer
+     */
     @Override
     @Transactional(readOnly=true)
-    public Customer findById(Long id) {
-        Customer customer = (Customer) getHibernateTemplate().get(Customer.class, id);
+    public E findById(Long id) {
+        E customer = (E) getHibernateTemplate().get(Customer.class, id);
         return customer;
     }
-    
-
-    @Override
-    @Transactional(readOnly=true)
-    public List<Customer> findAll(int start, int pageSize) {
-        Customer c = new Customer();
-        c.setCreatedBy(new User());
-        return findByExample(c, start, pageSize);
-    }
-
-    @Override
-    @Transactional(readOnly=true)    
-    public List<Customer> findByExample(Customer sample,long firstRecordMaxId, int pageSize) {
-        Criterion c = CdmsCriteriaExample.createEx(sample)
-                .enableLike(MatchMode.ANYWHERE)
-                .excludeProperty("id")
-                .excludeProperty("idFilter")                
-                .excludeProperty("createdAt")
-                .excludeProperty("version");
-        DetachedCriteria customerCr = DetachedCriteria.forClass(Customer.class);
-        customerCr.add(c);
-        if ( sample.getIdFilter() != null) {
-            customerCr.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
-        }
-        if ( sample.getCreatedAt() != null) {
-            if ( sample.getCreatedAtEnd() == null ) {
-                sample.setCreatedAtEnd(sample.getCreatedAt());
-            }
-            customerCr.add(Restrictions.between("createdAt", sample.getCreatedAt(), sample.getCreatedAtEnd()));
-        } else if ( sample.getCreatedAtEnd() != null) {
-            customerCr.add(Restrictions.le("createdAt", sample.getCreatedAtEnd()));
-        }
-        customerCr.add(Restrictions.gt("id", firstRecordMaxId));        
-        DetachedCriteria userCr = customerCr.createCriteria("createdBy");
-        Criterion u = CdmsCriteriaExample.createEx(sample.getCreatedBy())
-                .enableLike(MatchMode.ANYWHERE)
-                .excludeProperty("id")
-                .excludeProperty("version");
-        userCr.add(u);
-        
-        //int firstResult = firstRecordMaxId*pageSize;
-        //List<Customer> customers = (List<Customer>) getHibernateTemplate().findByCriteria(customerCr,firstResult,pageSize);
-        getHibernateTemplate().setMaxResults(pageSize);
-        List<Customer> customers = (List<Customer>) getHibernateTemplate().findByCriteria(customerCr);        
-        for ( Customer customer : customers) {
-            customer.getCreatedBy().setPermissions(new ArrayList());
-            customer.getCreatedBy().setPassword(null);
-        }
-/*        
-  to   
-        Long ll;
-        
-        for ( long i=0; i < 200000000; i++) {
-            ll = i * 2 / 3;
-        }
-        */ 
-        return customers;
-
-    }
-    protected DetachedCriteria buildCriteriaByExample(QueryPage<Customer> queryPage) {
-        Customer sample = queryPage.getEntityAsExample();
+    /**
+     * 
+     * @param queryPage
+     * @return 
+     */
+    protected DetachedCriteria buildCriteriaByExample(QueryPage<E> queryPage) {
+        E sample = queryPage.getEntityAsExample();
         Criterion c = CdmsCriteriaExample.createEx(queryPage.getEntityAsExample())
                 .enableLike(MatchMode.ANYWHERE)
                 .excludeProperty("id")
@@ -165,13 +127,30 @@ public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
         
         return customerCr;
     }
+    /**
+     * Executes a query and stores results into the given object 
+     * of type <code>QueryPage</code>. based for entities of type <code>Customer</code> by the given
+     * The method builds query using Hibernate Criteria API. 
+     * The <code>queryPage</code> contains properties such as <code>pageNo</code>
+     * and <code>pageSize</code>. Thus the query retrieves only the record that 
+     * correspond to the single page.
+     * The result of the query is a collection of type <code>java.util.List</code>.
+     * The method stores the results into the <code>queryPage</code>. 
+     * In addition to the main result the method retrieves the number of rows
+     * and stores it into property <code>rowCount</code> 
+     * of the <code>queryPage</code>.
+     * 
+     * @param queryPage the object that contains the query parameters, paging parameters
+     *    and a collection to store query results
+     * @return the object of type <code>QueryPage</code>
+     * @see org.cdms.entities.Customer
+     * @see org.cdms.remoting.QueryPage
+     */
     @Override
     @Transactional(readOnly=true)    
-    public QueryPage<Customer> findByExample(QueryPage<Customer> queryPage) {
+    public QueryPage<E> findByExample(QueryPage<E> queryPage) {
         DetachedCriteria customerCr = buildCriteriaByExample(queryPage);
-        Customer sample = queryPage.getEntityAsExample();
-//        customerCr.add(Restrictions.gt("id", firstRecordMaxId));        
-//        getHibernateTemplate().setMaxResults(pageSize);
+        E sample = queryPage.getEntityAsExample();
         
         customerCr.setProjection(Projections.rowCount());
         List rowCountList = getHibernateTemplate().findByCriteria(customerCr);
@@ -183,23 +162,17 @@ public class CustomerDaoImpl extends HibernateDaoSupport implements CustomerDao{
         customerCr.addOrder(Order.asc("id"));
         int firstRec = queryPage.getPageNo() * queryPage.getPageSize();
 
-        List<Customer> customers = (List<Customer>) getHibernateTemplate().findByCriteria(customerCr,firstRec,queryPage.getPageSize());        
+        List<E> customers = (List<E>) getHibernateTemplate().findByCriteria(customerCr,firstRec,queryPage.getPageSize());        
         for ( Customer customer : customers) {
             customer.getCreatedBy().setPermissions(new ArrayList());
             customer.getCreatedBy().setPassword(null);
         }
         queryPage.setQueryResult(customers);
         queryPage.setEntityAsExample(null);
-/*        
-  to   
-        Long ll;
         
-        for ( long i=0; i < 200000000; i++) {
-            ll = i * 2 / 3;
-        }
-        */ 
         return queryPage;
 
     }
+
     
 }
