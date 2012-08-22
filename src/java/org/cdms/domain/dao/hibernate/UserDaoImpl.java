@@ -1,7 +1,8 @@
-package org.cdms.domain.dao;
+package org.cdms.domain.dao.hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.cdms.domain.dao.UserDao;
 import org.cdms.entities.User;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;

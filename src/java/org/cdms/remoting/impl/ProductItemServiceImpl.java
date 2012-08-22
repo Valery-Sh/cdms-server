@@ -8,7 +8,6 @@ import org.cdms.entities.ProductItem;
 import org.cdms.remoting.ProductItemService;
 import org.cdms.remoting.QueryPage;
 import org.cdms.remoting.validation.ValidationHandler;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 /**
  *

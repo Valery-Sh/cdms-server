@@ -8,7 +8,6 @@ import org.cdms.entities.Permission;
 import org.cdms.remoting.CustomerService;
 import org.cdms.remoting.QueryPage;
 import org.cdms.remoting.validation.ValidationHandler;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 
 /**
  *

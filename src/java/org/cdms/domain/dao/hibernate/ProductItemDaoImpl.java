@@ -1,9 +1,13 @@
-package org.cdms.domain.dao;
+package org.cdms.domain.dao.hibernate;
 
+import org.cdms.domain.dao.hibernate.CdmsCriteriaExample;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import org.cdms.entities.Invoice;
-import org.cdms.entities.InvoiceItem;
+import org.cdms.domain.dao.EntityDao;
+import org.cdms.domain.dao.EntityDao;
 import org.cdms.entities.ProductItem;
+import org.cdms.entities.User;
 import org.cdms.remoting.QueryPage;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -20,50 +24,56 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @author V. Shyshkin
  */
-public class InvoiceItemDaoImpl<E extends InvoiceItem> extends HibernateDaoSupport implements EntityDao<E>{
+public class ProductItemDaoImpl<E extends ProductItem> extends HibernateDaoSupport implements EntityDao<E>{
     /**
-     * Inserts the specified entity of type <code>InvoiceItem</code> into the database.
+     * Inserts the specified entity of type <code>ProductItem</code> into the database.
      * @param entity the entity to be inserted. 
-     * @return the inserted entity of type <code>InvoiceItem</code>. 
-     * @see org.cdms.entities.InvoiceItem
+     * @return the inserted entity of type <code>ProductItem</code>. 
+     * @see org.cdms.entities.ProductItem
      */
     @Override
     @Transactional
     public E insert(E entity) {
-        Invoice invoice = getHibernateTemplate().get(Invoice.class,entity.getInvoice().getId());        
-        ProductItem productItem = getHibernateTemplate().get(ProductItem.class,entity.getProductItem().getId());        
-        entity.setInvoice(invoice);
-        entity.setProductItem(productItem);
+        User u = getHibernateTemplate().get(User.class,entity.getCreatedBy().getId());
+        entity.setCreatedBy(u);
+        entity.setCreatedAt(new Date());
+
         getHibernateTemplate().save(entity);
+        getHibernateTemplate().initialize(entity.getCreatedBy());
         return entity;
     }
     /**
-     * Updates the specified entity of type <code>InvoiceItem</code>.
+     * Updates the specified entity of type <code>ProductItem</code>.
      * @param entity the entity to be updates. 
-     * @return the updated entity of type <code>InvoiceItem</code>. 
-     * @see org.cdms.entities.InvoiceItem
+     * @return the updated entity of type <code>ProductItem</code>. 
+     * @see org.cdms.entities.ProductItem
      */
     @Override
     @Transactional
     public E update(E entity) {
         getHibernateTemplate().get(entity.getClass(),entity.getId());
         E c = getHibernateTemplate().merge(entity);
+        if ( c != null ) {
+            getHibernateTemplate().initialize(c.getCreatedBy());
+        }
         return c;
     }
 
     /**
      * Deletes the entity with the specified <code>identifier</code>.
      * @param id the id of the entity to be deleted. 
-     * @return the deleted entity of type <code>Invoice</code>. 
-     * @see org.cdms.entities.InvoiceItem
+     * @return the deleted entity of type <code>ProductItem</code>. 
+     * @see org.cdms.entities.ProductItem
      */
     @Override
     @Transactional
     public E delete(Long id) {
-        E result = (E)new InvoiceItem();
-        E c = (E)getHibernateTemplate().get(InvoiceItem.class, id);
+        E result = (E)new ProductItem();
+        E c = (E)getHibernateTemplate().get(ProductItem.class, id);
         if ( c != null ) {
+            User u = c.getCreatedBy();
             getHibernateTemplate().delete(c);
+            getHibernateTemplate().initialize(c.getCreatedBy());
         }
         
         return c;
@@ -71,13 +81,13 @@ public class InvoiceItemDaoImpl<E extends InvoiceItem> extends HibernateDaoSuppo
     /**
      * Executes query to retrieve the entity with the specified <code>identifier</code>.
      * @param id  the identifier of the entity to search for. 
-     * @return the found entity of type <code>InvoiceItem</code>. 
-     * @see org.cdms.entities.InvoiceItem
+     * @return the found entity of type <code>ProductItem</code>. 
+     * @see org.cdms.entities.ProductItem
      */
     @Override
     @Transactional(readOnly=true)
     public E findById(Long id) {
-        E entity = (E) getHibernateTemplate().get(InvoiceItem.class, id);
+        E entity = (E) getHibernateTemplate().get(ProductItem.class, id);
         return entity;
     }
     
@@ -88,17 +98,26 @@ public class InvoiceItemDaoImpl<E extends InvoiceItem> extends HibernateDaoSuppo
                 .enableLike(MatchMode.ANYWHERE)
                 .excludeProperty("id")
                 .excludeProperty("idFilter")                
+                .excludeProperty("createdAt")
                 .excludeProperty("version");
-        DetachedCriteria invoiceItemCr = DetachedCriteria.forClass(sample.getClass());
-        invoiceItemCr.add(c);
+        DetachedCriteria productItemCr = DetachedCriteria.forClass(sample.getClass());
+        productItemCr.add(c);
         if ( sample.getIdFilter() != null) {
-            invoiceItemCr.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
+            productItemCr.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
         }
-        return invoiceItemCr;
+        if ( sample.getCreatedAt() != null) {
+            if ( sample.getCreatedAtEnd() == null ) {
+                sample.setCreatedAtEnd(sample.getCreatedAt());
+            }
+            productItemCr.add(Restrictions.between("createdAt", sample.getCreatedAt(), sample.getCreatedAtEnd()));
+        } else if ( sample.getCreatedAtEnd() != null) {
+            productItemCr.add(Restrictions.le("createdAt", sample.getCreatedAtEnd()));
+        }
+        return productItemCr;
     }
     /**
      * Executes a query and stores results into the given object 
-     * of type <code>QueryPage</code>. based for entities of type <code>InvoiceItem</code> by the given
+     * of type <code>QueryPage</code>. based for entities of type <code>ProductItem</code> by the given
      * The method builds query using Hibernate Criteria API. 
      * The <code>queryPage</code> contains properties such as <code>pageNo</code>
      * and <code>pageSize</code>. Thus the query retrieves only the records that 
@@ -112,25 +131,30 @@ public class InvoiceItemDaoImpl<E extends InvoiceItem> extends HibernateDaoSuppo
      * @param queryPage the object that contains the query parameters, paging parameters
      *    and a collection to store query results
      * @return the object of type <code>QueryPage</code>
-     * @see org.cdms.entities.InvoiceItem
+     * @see org.cdms.entities.ProductItem
      * @see org.cdms.remoting.QueryPage
      */
+    
     @Override
     @Transactional(readOnly=true)    
     public QueryPage<E> findByExample(QueryPage<E> queryPage) {
-        DetachedCriteria invoiceItemCr = buildCriteriaByExample(queryPage);
+        DetachedCriteria productItemCr = buildCriteriaByExample(queryPage);
         
-        invoiceItemCr.setProjection(Projections.rowCount());
-        List rowCountList = getHibernateTemplate().findByCriteria(invoiceItemCr);
+        productItemCr.setProjection(Projections.rowCount());
+        List rowCountList = getHibernateTemplate().findByCriteria(productItemCr);
         
         int rowCount = ((Number)rowCountList.get(0)).intValue();
         queryPage.setRowCount(rowCount);
         
-        invoiceItemCr = buildCriteriaByExample(queryPage);
-        invoiceItemCr.addOrder(Order.asc("id"));
+        productItemCr = buildCriteriaByExample(queryPage);
+        productItemCr.addOrder(Order.asc("id"));
         int firstRec = queryPage.getPageNo() * queryPage.getPageSize();
 
-        List<E> items = (List<E>) getHibernateTemplate().findByCriteria(invoiceItemCr,firstRec,queryPage.getPageSize());        
+        List<E> items = (List<E>) getHibernateTemplate().findByCriteria(productItemCr,firstRec,queryPage.getPageSize());        
+        for ( E item : items) {
+            item.getCreatedBy().setPermissions(new ArrayList());
+            item.getCreatedBy().setPassword(null);
+        }
         queryPage.setQueryResult(items);
         queryPage.setEntityAsExample(null);
 

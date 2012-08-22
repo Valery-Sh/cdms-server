@@ -2,12 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cdms.domain.dao;
+package org.cdms.domain.dao.hibernate;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import org.cdms.domain.dao.InvoiceStatisticsDao;
+import org.cdms.domain.dao.InvoiceStatisticsDao;
 import org.cdms.entities.InvoiceStatView;
 import org.cdms.remoting.QueryPage;
 import org.hibernate.Query;

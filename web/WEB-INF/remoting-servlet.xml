@@ -63,29 +63,29 @@
     <!--  Configure DAO objects  -->
     
     <bean id="userDao" 
-          class="org.cdms.domain.dao.UserDaoImpl"> 
+          class="org.cdms.domain.dao.hibernate.UserDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
     <bean id="customerDao" 
-          class="org.cdms.domain.dao.CustomerDaoImpl"> 
+          class="org.cdms.domain.dao.hibernate.CustomerDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
     <bean id="invoiceDao" 
-          class="org.cdms.domain.dao.InvoiceDaoImpl"> 
+          class="org.cdms.domain.dao.hibernate.InvoiceDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
     <bean id="invoiceItemDao" 
-          class="org.cdms.domain.dao.InvoiceItemDaoImpl"> 
+          class="org.cdms.domain.dao.hibernate.InvoiceItemDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
     
     <bean id="productItemDao" 
-          class="org.cdms.domain.dao.ProductItemDaoImpl"> 
+          class="org.cdms.domain.dao.hibernate.ProductItemDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
 
     <bean id="invoiceStatisticsDao" 
-          class="org.cdms.domain.dao.InvoiceStatisticsDaoImpl"> 
+          class="org.cdms.domain.dao.hibernate.InvoiceStatisticsDaoImpl"> 
         <property name="hibernateTemplate" ref="hibernateTemplate" /> 
     </bean>     
 
@@ -107,7 +107,7 @@
         
     <!-- Default Exception Handler  -->
       
-    <bean id="exceptionHandler" class="org.cdms.domain.dao.RemoteExceptionHandler"/>    
+    <bean id="exceptionHandler" class="org.cdms.domain.dao.hibernate.RemoteExceptionHandlerImpl"/>    
     
     <!-- Configure UserService implementation class -->
     

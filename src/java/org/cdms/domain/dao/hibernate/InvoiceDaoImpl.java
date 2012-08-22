@@ -1,8 +1,10 @@
-package org.cdms.domain.dao;
+package org.cdms.domain.dao.hibernate;
 
+import org.cdms.domain.dao.hibernate.CdmsCriteriaExample;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.cdms.domain.dao.EntityDao;
 import org.cdms.entities.Invoice;
 import org.cdms.entities.User;
 import org.cdms.remoting.QueryPage;

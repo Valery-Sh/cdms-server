@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cdms.domain.dao;
+package org.cdms.domain.dao.hibernate;
 
 import org.hibernate.criterion.Example;
 import org.hibernate.type.Type;
