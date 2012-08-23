@@ -71,11 +71,17 @@ DECLARE
 	v_seq_id NUMBER;
 	v_userId INTEGER;
 	v_customerId INTEGER;
+	v_customerCreatedAt DATE;
+
 	v_count INTEGER;
 	v_min INTEGER;
 	v_max INTEGER;
 
-	 Cursor  customers  IS SELECT id 
+        v_month INTEGER;
+        v_day INTEGER;
+        v_createdAt  VARCHAR2(8);
+
+	 Cursor  customers  IS SELECT id,createdAt
                        FROM cdms_customers;
         
 BEGIN
@@ -90,7 +96,7 @@ BEGIN
            n := 0;
 	   c := 0;
 	   LOOP
-	  	FETCH customers INTO v_customerId;
+	  	FETCH customers INTO v_customerId,v_customerCreatedAt;
 	   	EXIT WHEN customers%NOTFOUND;
 
 		r := TRUNC(DBMS_RANDOM.VALUE(v_min,v_max));
@@ -100,10 +106,14 @@ BEGIN
   	        		v_userId := TRUNC(DBMS_RANDOM.VALUE(1,10));	
 				v_userId := v_userId * 10;      
 				v_seq_id  :=  cdms_Invoices_seq.nextval;         
+-- 				v_month :=  TRUNC(DBMS_RANDOM.VALUE(1, 12)); 
+--				v_day :=  TRUNC(DBMS_RANDOM.VALUE(1, 28));
+--			        v_createdAt := '2011' || LPAD(TO_CHAR( v_month ) ,2,'0') || LPAD(TO_CHAR( v_day ) ,2,'0');				
+
 				INSERT INTO cdms_Invoices (id, customerId,
 								   	createdAt,createdBy ) VALUES (
 									v_seq_id, v_customerId,
-								        TO_DATE('20120620','YYYYMMDD') ,v_userId		
+								        v_customerCreatedAt ,v_userId		
 	        		);
 				c := c + 1;
 				IF c = 2000 THEN

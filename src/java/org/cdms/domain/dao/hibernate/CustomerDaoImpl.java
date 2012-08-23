@@ -7,6 +7,7 @@ import org.cdms.domain.dao.EntityDao;
 import org.cdms.entities.Customer;
 import org.cdms.entities.User;
 import org.cdms.remoting.QueryPage;
+import org.cdms.remoting.exception.RemoteValidationException;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -108,7 +109,11 @@ public class CustomerDaoImpl<E extends Customer> extends HibernateDaoSupport imp
         if ( sample.getIdFilter() != null) {
             customerCr.add(Restrictions.sqlRestriction("{alias}.id like'%" + sample.getIdFilter() +"%'"));
         }
-        if ( sample.getCreatedAt() != null) {
+        Criterion dc = dateCriterion(sample.getCreatedAt(),sample.getCreatedAtEnd());
+        if ( dc != null ) {
+            customerCr.add(dc);
+        }
+/*        if ( sample.getCreatedAt() != null) {
             if ( sample.getCreatedAtEnd() == null ) {
                 sample.setCreatedAtEnd(sample.getCreatedAt());
             }
@@ -116,7 +121,7 @@ public class CustomerDaoImpl<E extends Customer> extends HibernateDaoSupport imp
         } else if ( sample.getCreatedAtEnd() != null) {
             customerCr.add(Restrictions.le("createdAt", sample.getCreatedAtEnd()));
         }
-
+*/
         DetachedCriteria userCr = customerCr.createCriteria("createdBy");
         Criterion u = CdmsCriteriaExample.createEx(sample.getCreatedBy())
                 .enableLike(MatchMode.ANYWHERE)
@@ -127,6 +132,24 @@ public class CustomerDaoImpl<E extends Customer> extends HibernateDaoSupport imp
 
         
         return customerCr;
+    }
+    private Criterion dateCriterion(Date startDate, Date endDate) {
+        Criterion c = null;
+        if (startDate != null) {
+            if (endDate == null) {
+                c = Restrictions.ge("createdAt", startDate);
+            } else if (startDate.equals(endDate)){
+                c = Restrictions.eq("createdAt", startDate);
+            } else if (endDate.compareTo(startDate) < 0 ){
+                throw new RemoteValidationException("Start date must be null or equals or less than endDate");
+            } else {
+                c = Restrictions.between("createdAt", startDate,endDate);
+            }
+        } else if (endDate != null) {
+             c = Restrictions.le("createdAt", endDate);
+        }
+        return c;
+        
     }
     /**
      * Executes a query and stores results into the given object 

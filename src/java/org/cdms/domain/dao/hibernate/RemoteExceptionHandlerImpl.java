@@ -14,6 +14,7 @@ import org.springframework.orm.hibernate3.HibernateSystemException;
  */
 public class RemoteExceptionHandlerImpl implements RemoteExceptionHandler {
     
+    @Override
     public void throwDeleteFailure(long id,String entityClassName) {
         RemoteDataAccessException re = new RemoteDataAccessException("attempt to delete non-existend entity");
         re.setErrorCode(RemoteDataAccessException.OBJECT_RETRIEVAL_DELETE);
@@ -23,6 +24,7 @@ public class RemoteExceptionHandlerImpl implements RemoteExceptionHandler {
         throw re;
 
     }    
+    @Override
     public void throwDataAccessTranslated(Exception e) {
         RemoteDataAccessException re = new RemoteDataAccessException(e.getMessage());
         re.setOriginalClassName(e.getClass().getName());

@@ -8,6 +8,7 @@ import org.cdms.entities.InvoiceItem;
 import org.cdms.entities.ProductItem;
 import org.cdms.remoting.InvoiceItemService;
 import org.cdms.remoting.QueryPage;
+import org.cdms.remoting.exception.RemoteValidationException;
 import org.cdms.remoting.validation.ValidationHandler;
 
 /**
@@ -127,6 +128,10 @@ public class InvoiceItemServiceImpl<E extends InvoiceItem> implements InvoiceIte
         try {
             result = invoiceItemDao.findByExample(r);
         } catch (Exception e) {
+            if ( e instanceof RemoteValidationException ) {
+                throw (RemoteValidationException)e;
+            }
+
             exceptionHandler.throwDataAccessTranslated(e);
         }
         for (InvoiceItem it : queryPage.getQueryResult()) {

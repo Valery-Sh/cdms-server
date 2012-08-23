@@ -7,6 +7,7 @@ import org.cdms.entities.Customer;
 import org.cdms.entities.Permission;
 import org.cdms.remoting.CustomerService;
 import org.cdms.remoting.QueryPage;
+import org.cdms.remoting.exception.RemoteValidationException;
 import org.cdms.remoting.validation.ValidationHandler;
 
 /**
@@ -112,6 +113,9 @@ public class CustomerServiceImpl<E extends Customer>  implements CustomerService
             //result = customerDao.findByExample(queryPage);
             result = customerDao.findByExample(r);
         } catch(Exception e) {
+            if ( e instanceof RemoteValidationException ) {
+                throw (RemoteValidationException)e;
+            }
             exceptionHandler.throwDataAccessTranslated(e);        
         }
         return result;

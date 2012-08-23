@@ -8,6 +8,7 @@ import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.entities.InvoiceStatView;
 import org.cdms.remoting.InvoiceStatisticsService;
 import org.cdms.remoting.QueryPage;
+import org.cdms.remoting.exception.RemoteValidationException;
 
 /**
  *
@@ -38,6 +39,10 @@ public class InvoiceStatisticsServiceImpl implements InvoiceStatisticsService {
         try {
             result = statisticsDao.requestInvoice(queryPage);
         } catch(Exception e) {
+            if ( e instanceof RemoteValidationException ) {
+                throw (RemoteValidationException)e;
+            }
+            
             exceptionHandler.throwDataAccessTranslated(e);        
         }
         if ( result != null && result.getQueryResult() != null && !result.getQueryResult().isEmpty() ) {

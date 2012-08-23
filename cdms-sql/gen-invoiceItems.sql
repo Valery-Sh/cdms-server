@@ -14,7 +14,6 @@ SET SERVEROUTPUT ON;
 
 -- -------------------------------------------------GENERATE INVOICEITEMS -----------------------------------------------------------------------------------
 
-
 DECLARE
 	n INTEGER;
 
@@ -30,6 +29,7 @@ DECLARE
                        FROM cdms_Invoices;
         
 BEGIN
+	DBMS_OUTPUT.PUT_LINE('--------------  GENERATE  INVOICEITEMS ---------------------------');
 	   v_min := 1;
            v_max := 10;
 
@@ -50,7 +50,7 @@ BEGIN
 		FOR i IN 1..v_count LOOP
 			v_itemId := TRUNC(DBMS_RANDOM.VALUE(1, v_items_row_count));
 			v_itemId := v_itemId * 10;
-			c := TRUNC(DBMS_RANDOM.VALUE(1,100));			
+			c := TRUNC(DBMS_RANDOM.VALUE(1,20));			
 		
 			INSERT INTO cdms_InvoiceItems (id, invoiceId, itemId, itemCount)
 				   	 VALUES (cdms_InvoiceItems_seq.nextval, v_invoiceid,v_itemId,c) ;

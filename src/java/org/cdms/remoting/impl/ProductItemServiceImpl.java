@@ -7,6 +7,7 @@ import org.cdms.entities.Permission;
 import org.cdms.entities.ProductItem;
 import org.cdms.remoting.ProductItemService;
 import org.cdms.remoting.QueryPage;
+import org.cdms.remoting.exception.RemoteValidationException;
 import org.cdms.remoting.validation.ValidationHandler;
 
 /**
@@ -110,6 +111,9 @@ public class ProductItemServiceImpl<E extends ProductItem>  implements ProductIt
         try {
             result = productItemDao.findByExample(r);
         } catch(Exception e) {
+            if ( e instanceof RemoteValidationException ) {
+                throw (RemoteValidationException)e;
+            }
             exceptionHandler.throwDataAccessTranslated(e);        
         }
         for ( E it :queryPage.getQueryResult() ) {
