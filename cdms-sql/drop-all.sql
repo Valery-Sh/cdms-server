@@ -23,6 +23,7 @@ DROP SEQUENCE cdms_iItems_seq;
 
 DROP FUNCTION getRandomItemName;
 DROP FUNCTION getRandomPrice;
+DROP FUNCTION getRandomDate;
 
 DROP TABLE cdms_customers;
 DROP SEQUENCE cdms_customers_seq; 

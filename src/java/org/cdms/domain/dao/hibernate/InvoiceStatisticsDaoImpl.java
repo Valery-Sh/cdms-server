@@ -29,7 +29,6 @@ public class InvoiceStatisticsDaoImpl extends HibernateDaoSupport implements Inv
         Long customerId = (Long)queryPage.getParams()[0];
         Date startDate = (Date)queryPage.getParams()[1];
         Date endDate   = (Date)queryPage.getParams()[2];     
-//        Date q_endDate = endDate;
         
         Date[] params = new Date[] {};
         
@@ -123,7 +122,7 @@ public class InvoiceStatisticsDaoImpl extends HibernateDaoSupport implements Inv
 
     
 //    @Override
-    @Transactional(readOnly = true)
+/*    @Transactional(readOnly = true)
     public QueryPage<InvoiceStatView> requestInvoiceOld(QueryPage<InvoiceStatView> queryPage) {
         String whereCondCount = ""; // to calculate row count
         String whereCond = "";
@@ -215,6 +214,6 @@ public class InvoiceStatisticsDaoImpl extends HibernateDaoSupport implements Inv
         
         return queryPage;
     }             
-
+*/
 
 }

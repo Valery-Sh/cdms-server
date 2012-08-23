@@ -75,7 +75,7 @@ END;
 /
 
 
---------------  GENERATE  5000000 ITEMS ---------------------------
+--------------  GENERATE  5000000 ITEMS  (createdDate in [2001-01-01,2011-06-30']  ---------------------------
 
 
 DECLARE
@@ -84,31 +84,32 @@ DECLARE
 	userId INTEGER;
         v_barcode VARCHAR2(12);
         v_commit_counter NUMBER;
-        v_month INTEGER;
-        v_day INTEGER;
-        v_createdAt  VARCHAR2(8);
+        v_committed NUMBER;
+        v_createdAt  DATE;
 BEGIN
 	DBMS_OUTPUT.PUT_LINE('--------------  GENERATE  500,000 ITEMS ---------------------------');
 	v_commit_counter := 0;
+	v_committed := 0;
 	FOR i IN 1..500000 LOOP
 		v_commit_counter := v_commit_counter + 1;
+		v_committed := v_committed + 1;
 		IF   v_commit_counter = 10000 THEN
 			COMMIT;
+			v_commit_counter := 0;
+			DBMS_OUTPUT.PUT_LINE('GEN 500,000 ITEMS COMMITTED:  ' ||  v_committed );
+
 		END IF;
                 v_itemName := getRandomItemName || i;
   	        userId := TRUNC(DBMS_RANDOM.VALUE(1,10));	
 		userId := userId * 10;
 		v_barcode :=  TO_CHAR( TRUNC(DBMS_RANDOM.VALUE(127493, 999999)) ) || LPAD(TO_CHAR(i),6);
-		v_month :=  TRUNC(DBMS_RANDOM.VALUE(1, 12)); 
-		v_day :=  TRUNC(DBMS_RANDOM.VALUE(1, 28));
 
-
-	        v_createdAt := '2011' || LPAD(TO_CHAR( v_month ) ,2,'0') || LPAD(TO_CHAR( v_day ) ,2,'0');
+		v_createdAt := getRandomDate(TO_DATE('20110101','YYYYMMDD'),TO_DATE('20110630','YYYYMMDD'));
 
 		INSERT INTO cdms_Items (id, price,barcode,itemName,
 								   createdAt,createdBy ) VALUES (
 				cdms_Items_seq.nextval,
-			        getRandomPrice, v_barcode,v_itemName,TO_DATE(v_createdAt,'YYYYMMDD') ,userId		
+			        getRandomPrice, v_barcode,v_itemName,v_createdAt ,userId		
 	        );
 		
 	END LOOP;     

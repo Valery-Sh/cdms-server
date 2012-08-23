@@ -73,13 +73,13 @@ DECLARE
 	v_customerId INTEGER;
 	v_customerCreatedAt DATE;
 
+        v_committed NUMBER;
+
 	v_count INTEGER;
 	v_min INTEGER;
 	v_max INTEGER;
 
-        v_month INTEGER;
-        v_day INTEGER;
-        v_createdAt  VARCHAR2(8);
+        v_createdAt  DATE;
 
 	 Cursor  customers  IS SELECT id,createdAt
                        FROM cdms_customers;
@@ -87,7 +87,7 @@ DECLARE
 BEGIN
 	   v_min := 1;
            v_max := 10;
-
+	   v_committed  :=  0;
 
     	   v_count := TRUNC(DBMS_RANDOM.VALUE(v_min,v_max));			
 
@@ -98,6 +98,8 @@ BEGIN
 	   LOOP
 	  	FETCH customers INTO v_customerId,v_customerCreatedAt;
 	   	EXIT WHEN customers%NOTFOUND;
+               v_committed  :=   v_committed + 1;
+
 
 		r := TRUNC(DBMS_RANDOM.VALUE(v_min,v_max));
 		v_count := n + r;		
@@ -106,19 +108,19 @@ BEGIN
   	        		v_userId := TRUNC(DBMS_RANDOM.VALUE(1,10));	
 				v_userId := v_userId * 10;      
 				v_seq_id  :=  cdms_Invoices_seq.nextval;         
--- 				v_month :=  TRUNC(DBMS_RANDOM.VALUE(1, 12)); 
---				v_day :=  TRUNC(DBMS_RANDOM.VALUE(1, 28));
---			        v_createdAt := '2011' || LPAD(TO_CHAR( v_month ) ,2,'0') || LPAD(TO_CHAR( v_day ) ,2,'0');				
+
+				v_createdAt := getRandomDate(v_customerCreatedAt, TO_DATE('20120801','YYYYMMDD') );		
 
 				INSERT INTO cdms_Invoices (id, customerId,
 								   	createdAt,createdBy ) VALUES (
 									v_seq_id, v_customerId,
-								        v_customerCreatedAt ,v_userId		
+								        v_createdAt ,v_userId		
 	        		);
 				c := c + 1;
 				IF c = 2000 THEN
 					COMMIT;
 					c := 0;
+					DBMS_OUTPUT.PUT_LINE('GEN 50,000 INVOICES COMMITTED:  ' ||  v_committed );
 				END IF;
           		END LOOP;
 			IF r < 10 THEN
@@ -132,7 +134,5 @@ BEGIN
 
 END;
 /
-
-
 
 DISCONNECT;

@@ -75,9 +75,7 @@ DECLARE
         phonev VARCHAR2(12);
         nphone INTEGER;
 
-        v_month INTEGER;
-        v_day INTEGER;
-        v_createdAt  VARCHAR2(8);
+        v_createdAt  DATE;
 
 
 BEGIN
@@ -141,12 +139,10 @@ DBMS_OUTPUT.PUT_LINE('==========================================================
 --		    DBMS_OUTPUT.PUT_LINE('Array element' ||  i || ',' ||  j   ||  ' = [' || lastNames(i)  ||  ']'   ||  '  NAME  ' || getRandomName || ' else=' || names(idx)  || '; userId=' || userId);
 --		    DBMS_OUTPUT.PUT_LINE('EMAIL = ' ||  emailv  || ' ; phone = ' || phonev || '; j=' || j || '; i=' || i );
 
-			   v_month :=  TRUNC(DBMS_RANDOM.VALUE(1, 12)); 
-			   v_day :=  TRUNC(DBMS_RANDOM.VALUE(1, 28));
-             		   v_createdAt := '2011' || LPAD(TO_CHAR( v_month ) ,2,'0') || LPAD(TO_CHAR( v_day ) ,2,'0');
+             		   v_createdAt := getRandomDate( TO_DATE('20110701','YYYYMMDD'), TO_DATE('20120801','YYYYMMDD'));
 
 			    INSERT INTO cdms_Customers (id,firstName,lastName,email,phone,createdAt,createdBy) VALUES (
-   			             cdms_Customers_seq.nextval,firstNamev,lastNamev,LOWER(emailv),phonev, TO_DATE(v_createdAt,'YYYYMMDD'),userId
+   			             cdms_Customers_seq.nextval,firstNamev,lastNamev,LOWER(emailv),phonev, v_createdAt,userId
 	        	     );
 	                END LOOP;     
 		END LOOP;     

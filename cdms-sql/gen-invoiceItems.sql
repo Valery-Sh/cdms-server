@@ -33,8 +33,6 @@ BEGIN
 	   v_min := 1;
            v_max := 10;
 
-	   
-
 	   SELECT COUNT(*) INTO v_Items_row_count FROM cdms_Items ;
 
 	   OPEN invoices;

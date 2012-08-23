@@ -1,4 +1,3 @@
-SET SERVEROUTPUT ON;
 
 CONNECT / AS SYSDBA;
 ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
@@ -6,6 +5,9 @@ DISCONNECT;
 
 
 CONNECT hr/hr;
+
+SET SERVEROUTPUT ON;
+
 --
 -- First drop lnked by foreign key table
 --
@@ -29,6 +31,7 @@ CREATE SEQUENCE cdms_Users_seq
     START WITH 10
     INCREMENT BY 10
     CACHE 50;
+
 
 INSERT INTO cdms_Users (id,firstName,lastName,userName,password) VALUES (
 		cdms_Users_seq.nextval,'Bill','Gates','MSWIN','msbg'		

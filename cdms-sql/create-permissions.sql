@@ -21,15 +21,18 @@ CREATE SEQUENCE cdms_Permissions_seq
     CACHE 50;
 
 --
--- users with id in (1,3,6) permission: 'view'
+-- users with id =10 permission: 'edit' and 'view statistics'
 --
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
-		cdms_Permissions_seq.nextval,'view',10		
+		cdms_Permissions_seq.nextval,'edit',10		
 	);
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'view statistics',10		
 	);
 
+--
+-- users with id in (30,60) permission: 'view'
+--
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'view',30		
 	);
@@ -38,7 +41,7 @@ INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 	);
 
 --
--- users with id in (2,4,10) permission: 'edit'
+-- users with id in (20,40,100) permission: 'edit'
 --
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'edit',20	
@@ -49,9 +52,8 @@ INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'edit',100		
 	);
-
 --
--- users with id in (5,7,8,9) permission: 'view statistics'
+-- users with id in (50,70,80,90) permission: 'view statistics'
 --
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'view statistics',50		

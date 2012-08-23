@@ -88,16 +88,9 @@
             </test-roots>
         </data>
         <spring-data xmlns="http://www.netbeans.org/ns/spring-data/1">
-            <config-files>
-                <config-file>web/WEB-INF/applicationContext.xml</config-file>
-                <config-file>web/WEB-INF/dispatcher-servlet.xml</config-file>
-                <config-file>web/WEB-INF/remoting-security.xml</config-file>
-            </config-files>
+            <config-files/>
             <config-file-groups>
-                <config-file-group name="Default Group">
-                    <config-file>web/WEB-INF/applicationContext.xml</config-file>
-                    <config-file>web/WEB-INF/dispatcher-servlet.xml</config-file>
-                </config-file-group>
+                <config-file-group name="Default Group"/>
             </config-file-groups>
         </spring-data>
     </configuration>
