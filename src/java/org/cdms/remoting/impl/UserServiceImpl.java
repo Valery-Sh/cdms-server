@@ -2,9 +2,9 @@ package org.cdms.remoting.impl;
 
 import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.domain.dao.UserDao;
-import org.cdms.entities.User;
-import org.cdms.remoting.UserService;
-import org.cdms.remoting.validation.ValidationHandler;
+import org.cdms.shared.entities.User;
+import org.cdms.shared.remoting.UserService;
+import org.cdms.shared.remoting.validation.ValidationHandler;
 
 /**
  *

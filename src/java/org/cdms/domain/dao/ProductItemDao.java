@@ -4,8 +4,7 @@
  */
 package org.cdms.domain.dao;
 
-import org.cdms.entities.ProductItem;
-import org.cdms.remoting.QueryPage;
+import org.cdms.shared.entities.ProductItem;
 
 /**
  *

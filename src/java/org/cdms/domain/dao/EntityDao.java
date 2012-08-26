@@ -1,6 +1,6 @@
 package org.cdms.domain.dao;
 
-import org.cdms.remoting.QueryPage;
+import org.cdms.shared.remoting.QueryPage;
 
 /**
  * Defines common functionality for entity classes.

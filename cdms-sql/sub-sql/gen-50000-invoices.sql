@@ -1,12 +1,3 @@
-CONNECT / AS SYSDBA;
-
-
-ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
-DISCONNECT;
-
-
-CONNECT hr/hr;
-
 SET SERVEROUTPUT ON;  
 --
 -- First drop lnked by foreign key table
@@ -120,7 +111,7 @@ BEGIN
 				IF c = 2000 THEN
 					COMMIT;
 					c := 0;
-					DBMS_OUTPUT.PUT_LINE('GEN 50,000 INVOICES COMMITTED:  ' ||  v_committed );
+--					DBMS_OUTPUT.PUT_LINE('GEN 50,000 INVOICES COMMITTED:  ' ||  v_committed );
 				END IF;
           		END LOOP;
 			IF r < 10 THEN
@@ -134,5 +125,3 @@ BEGIN
 
 END;
 /
-
-DISCONNECT;

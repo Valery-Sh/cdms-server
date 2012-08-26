@@ -1,12 +1,3 @@
-CONNECT / AS SYSDBA;
-
-
-ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
-DISCONNECT;
-
-
-CONNECT hr/hr;
-
 SET SERVEROUTPUT ON;  
 --
 -- First drop lnked by foreign key table
@@ -28,6 +19,3 @@ DROP FUNCTION getRandomDate;
 DROP TABLE cdms_customers;
 DROP SEQUENCE cdms_customers_seq; 
 DROP FUNCTION getRandomName;
-
-
-DISCONNECT;

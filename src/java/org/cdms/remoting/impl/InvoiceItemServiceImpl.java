@@ -3,13 +3,13 @@ package org.cdms.remoting.impl;
 import java.math.BigDecimal;
 import org.cdms.domain.dao.EntityDao;
 import org.cdms.domain.dao.RemoteExceptionHandler;
-import org.cdms.entities.Invoice;
-import org.cdms.entities.InvoiceItem;
-import org.cdms.entities.ProductItem;
-import org.cdms.remoting.InvoiceItemService;
-import org.cdms.remoting.QueryPage;
-import org.cdms.remoting.exception.RemoteValidationException;
-import org.cdms.remoting.validation.ValidationHandler;
+import org.cdms.shared.entities.Invoice;
+import org.cdms.shared.entities.InvoiceItem;
+import org.cdms.shared.entities.ProductItem;
+import org.cdms.shared.remoting.InvoiceItemService;
+import org.cdms.shared.remoting.QueryPage;
+import org.cdms.shared.remoting.exception.RemoteValidationException;
+import org.cdms.shared.remoting.validation.ValidationHandler;
 
 /**
  *

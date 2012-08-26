@@ -1,6 +1,6 @@
 package org.cdms.domain.dao;
 
-import org.cdms.entities.Customer;
+import org.cdms.shared.entities.Customer;
 
 /**
  * 

@@ -1,7 +1,7 @@
 package org.cdms.domain.dao.hibernate;
 
 import org.cdms.domain.dao.RemoteExceptionHandler;
-import org.cdms.remoting.exception.RemoteDataAccessException;
+import org.cdms.shared.remoting.exception.RemoteDataAccessException;
 import org.springframework.orm.hibernate3.HibernateJdbcException;
 import org.springframework.orm.hibernate3.HibernateObjectRetrievalFailureException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;

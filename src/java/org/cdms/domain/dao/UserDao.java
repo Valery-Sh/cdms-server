@@ -1,7 +1,7 @@
 package org.cdms.domain.dao;
 
 import java.util.List;
-import org.cdms.entities.User;
+import org.cdms.shared.entities.User;
 
 /**
  *

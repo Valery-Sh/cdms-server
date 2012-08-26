@@ -1,9 +1,3 @@
-CONNECT / AS SYSDBA;
-
-SET SERVEROUTPUT ON;  -- MUST BE AFTER COONECT
-ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
-DISCONNECT;
-CONNECT hr/hr;
 --
 -- First drop lnked by foreign key table
 --
@@ -153,5 +147,3 @@ DBMS_OUTPUT.PUT_LINE('==========================================================
 END;
 /
 DROP FUNCTION getRandomName;
-
-DISCONNECT;

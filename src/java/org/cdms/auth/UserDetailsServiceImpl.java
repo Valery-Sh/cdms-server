@@ -2,8 +2,8 @@ package org.cdms.auth;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.cdms.entities.Permission;
-import org.cdms.remoting.UserService;
+import org.cdms.shared.entities.Permission;
+import org.cdms.shared.remoting.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,7 +38,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     protected AuthenticatedUser findByUsername(String userName) {
         
-        org.cdms.entities.User u = userService.findByUsername(userName);
+        org.cdms.shared.entities.User u = userService.findByUsername(userName);
         
         if (u == null) {
             return null;

@@ -1,7 +1,7 @@
 package org.cdms.domain.dao;
 
-import org.cdms.entities.InvoiceStatView;
-import org.cdms.remoting.QueryPage;
+import org.cdms.shared.entities.InvoiceStatView;
+import org.cdms.shared.remoting.QueryPage;
 
 /**
  *

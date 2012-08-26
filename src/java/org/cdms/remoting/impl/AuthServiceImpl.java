@@ -1,8 +1,8 @@
 package org.cdms.remoting.impl;
 
 import org.cdms.auth.AuthenticatedUser;
-import org.cdms.remoting.AuthService;
-import org.cdms.remoting.UserInfo;
+import org.cdms.shared.remoting.AuthService;
+import org.cdms.shared.remoting.UserInfo;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

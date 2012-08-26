@@ -1,13 +1,12 @@
 package org.cdms.domain.dao.hibernate;
 
-import org.cdms.domain.dao.hibernate.CdmsCriteriaExample;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.cdms.domain.dao.EntityDao;
-import org.cdms.entities.Invoice;
-import org.cdms.entities.User;
-import org.cdms.remoting.QueryPage;
+import org.cdms.shared.entities.Invoice;
+import org.cdms.shared.entities.User;
+import org.cdms.shared.remoting.QueryPage;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -94,6 +93,7 @@ public class InvoiceDaoImpl<E extends Invoice> extends HibernateDaoSupport imple
         E sample = queryPage.getEntityAsExample();
         Criterion c = CdmsCriteriaExample.createEx(queryPage.getEntityAsExample())
                 .enableLike(MatchMode.ANYWHERE)
+                .ignoreCase()
                 .excludeProperty("id")
                 .excludeProperty("idFilter")                
                 .excludeProperty("customer") 
@@ -118,6 +118,7 @@ public class InvoiceDaoImpl<E extends Invoice> extends HibernateDaoSupport imple
         DetachedCriteria userCr = mainCriteria.createCriteria("createdBy");
         Criterion u = CdmsCriteriaExample.createEx(sample.getCreatedBy())
                 .enableLike(MatchMode.ANYWHERE)
+                .ignoreCase()
                 .excludeProperty("id")
                 .excludeProperty("version")
                 .excludeProperty("permissions");
@@ -128,6 +129,7 @@ public class InvoiceDaoImpl<E extends Invoice> extends HibernateDaoSupport imple
         Criterion cust = CdmsCriteriaExample.createEx(sample.getCustomer())
                 .enableLike(MatchMode.ANYWHERE)
                 .excludeProperty("id")
+                .ignoreCase()
                 .excludeProperty("createdBy")
                 .excludeProperty("createdAt")
                 .excludeProperty("version");

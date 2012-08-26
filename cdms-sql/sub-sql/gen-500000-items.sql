@@ -1,12 +1,3 @@
-CONNECT / AS SYSDBA;
-
-
-ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
-DISCONNECT;
-
-
-CONNECT hr/hr;
-
 SET SERVEROUTPUT ON;  
 --
 -- First drop lnked by foreign key table
@@ -70,27 +61,46 @@ CREATE FUNCTION getRandomPrice
 RETURN NUMBER
 AS
 BEGIN
-
-   RETURN TRUNC(DBMS_RANDOM.VALUE(100,2500),2) ;
+   RETURN TRUNC(DBMS_RANDOM.VALUE(50,250),2) ;
 END;
 /
+
+
+--------------  GENERATE  5000000 ITEMS  (createdDate in [2001-01-01,2011-06-30']  ---------------------------
+
 
 DECLARE
 	
 	v_ItemName VARCHAR2(16);
 	userId INTEGER;
         v_barcode VARCHAR2(12);
+        v_commit_counter NUMBER;
+        v_committed NUMBER;
+        v_createdAt  DATE;
 BEGIN
-	FOR i IN 1..1000 LOOP
+	DBMS_OUTPUT.PUT_LINE('--------------  GENERATE  500,000 ITEMS ---------------------------');
+	v_commit_counter := 0;
+	v_committed := 0;
+	FOR i IN 1..500000 LOOP
+		v_commit_counter := v_commit_counter + 1;
+		v_committed := v_committed + 1;
+		IF   v_commit_counter = 10000 THEN
+			COMMIT;
+			v_commit_counter := 0;
+			DBMS_OUTPUT.PUT_LINE('GEN 500,000 ITEMS COMMITTED:  ' ||  v_committed );
+
+		END IF;
                 v_itemName := getRandomItemName || i;
   	        userId := TRUNC(DBMS_RANDOM.VALUE(1,10));	
 		userId := userId * 10;
-		v_barcode := '040' || TO_CHAR( TRUNC(DBMS_RANDOM.VALUE(197846441, 999999999)) );
-		DBMS_OUTPUT.PUT_LINE( ' --- ' || getRandomPrice ||  '; '  ||  v_itemName);
+		v_barcode :=  TO_CHAR( TRUNC(DBMS_RANDOM.VALUE(127493, 999999)) ) || LPAD(TO_CHAR(i),6);
+
+		v_createdAt := getRandomDate(TO_DATE('20110101','YYYYMMDD'),TO_DATE('20110630','YYYYMMDD'));
+
 		INSERT INTO cdms_Items (id, price,barcode,itemName,
 								   createdAt,createdBy ) VALUES (
 				cdms_Items_seq.nextval,
-			        getRandomPrice, v_barcode,v_itemName,TO_DATE('20120620','YYYYMMDD') ,userId		
+			        getRandomPrice, v_barcode,v_itemName,v_createdAt ,userId		
 	        );
 		
 	END LOOP;     
@@ -102,16 +112,4 @@ END;
 DROP FUNCTION getRandomItemName;
 DROP FUNCTION getRandomPrice;
 
-DISCONNECT;
 
-
-				-- ----------- For each Invoice generate a range of InvoiceItems  -------------------------
-  			        v_count := TRUNC(DBMS_RANDOM.VALUE( v_minInvoiceItems, v_maxInvoiceItems));		
-				
-				FOR i IN 1..v_count LOOP
-
-					INSERT INTO cdms_InvoiceItems (id, invoiceId,itemId,itemCount)
-								   	 VALUES (
-										cdms_InvoiceItems_seq.nextval, v_seq_id,20, i
-		       			);
-				END LOOP;

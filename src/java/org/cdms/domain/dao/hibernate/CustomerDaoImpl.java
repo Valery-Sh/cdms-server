@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.cdms.domain.dao.EntityDao;
-import org.cdms.entities.Customer;
-import org.cdms.entities.User;
-import org.cdms.remoting.QueryPage;
-import org.cdms.remoting.exception.RemoteValidationException;
+import org.cdms.shared.entities.Customer;
+import org.cdms.shared.entities.User;
+import org.cdms.shared.remoting.QueryPage;
+import org.cdms.shared.remoting.exception.RemoteValidationException;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -100,6 +100,7 @@ public class CustomerDaoImpl<E extends Customer> extends HibernateDaoSupport imp
         E sample = queryPage.getEntityAsExample();
         Criterion c = CdmsCriteriaExample.createEx(queryPage.getEntityAsExample())
                 .enableLike(MatchMode.ANYWHERE)
+                .ignoreCase()
                 .excludeProperty("id")
                 .excludeProperty("idFilter")                
                 .excludeProperty("createdAt")
@@ -113,15 +114,7 @@ public class CustomerDaoImpl<E extends Customer> extends HibernateDaoSupport imp
         if ( dc != null ) {
             customerCr.add(dc);
         }
-/*        if ( sample.getCreatedAt() != null) {
-            if ( sample.getCreatedAtEnd() == null ) {
-                sample.setCreatedAtEnd(sample.getCreatedAt());
-            }
-            customerCr.add(Restrictions.between("createdAt", sample.getCreatedAt(), sample.getCreatedAtEnd()));
-        } else if ( sample.getCreatedAtEnd() != null) {
-            customerCr.add(Restrictions.le("createdAt", sample.getCreatedAtEnd()));
-        }
-*/
+
         DetachedCriteria userCr = customerCr.createCriteria("createdBy");
         Criterion u = CdmsCriteriaExample.createEx(sample.getCreatedBy())
                 .enableLike(MatchMode.ANYWHERE)

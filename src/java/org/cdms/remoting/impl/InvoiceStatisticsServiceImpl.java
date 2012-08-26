@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.cdms.domain.dao.InvoiceStatisticsDao;
 import org.cdms.domain.dao.RemoteExceptionHandler;
-import org.cdms.entities.InvoiceStatView;
-import org.cdms.remoting.InvoiceStatisticsService;
-import org.cdms.remoting.QueryPage;
-import org.cdms.remoting.exception.RemoteValidationException;
+import org.cdms.shared.entities.InvoiceStatView;
+import org.cdms.shared.remoting.InvoiceStatisticsService;
+import org.cdms.shared.remoting.QueryPage;
+import org.cdms.shared.remoting.exception.RemoteValidationException;
 
 /**
  *

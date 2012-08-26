@@ -4,7 +4,7 @@
  */
 package org.cdms.domain.dao;
 
-import org.cdms.entities.InvoiceItem;
+import org.cdms.shared.entities.InvoiceItem;
 
 /**
  *

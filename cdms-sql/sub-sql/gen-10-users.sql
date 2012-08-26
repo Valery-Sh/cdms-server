@@ -1,11 +1,3 @@
-
-CONNECT / AS SYSDBA;
-ALTER USER hr IDENTIFIED BY hr ACCOUNT UNLOCK;
-DISCONNECT;
-
-
-CONNECT hr/hr;
-
 SET SERVEROUTPUT ON;
 
 --
@@ -33,20 +25,32 @@ CREATE SEQUENCE cdms_Users_seq
     CACHE 50;
 
 
+-- 1). can view, edit and view statistics
+
 INSERT INTO cdms_Users (id,firstName,lastName,userName,password) VALUES (
-		cdms_Users_seq.nextval,'Bill','Gates','MSWIN','msbg'		
+		cdms_Users_seq.nextval,'Bill','Gates','ALL','all'		
 	);
+-- 2). can only view, and view statistics. Cannot edit Customers and Invoices
+
 INSERT INTO cdms_Users (id,firstName,lastName,userName,password) VALUES (
-		cdms_Users_seq.nextval,'Ann','Brown','Ann B.','abpsw'		
+		cdms_Users_seq.nextval,'Ann','Brown','VS','vs'		
 	);
+
+-- 3). can edit, and cannot view statistics. 
+
 INSERT INTO cdms_Users (id,firstName,lastName,userName,password) VALUES (
-		cdms_Users_seq.nextval,'Jone','Smith','J.S.','jspsw'		
+		cdms_Users_seq.nextval,'Jone','Smith','E','e'		
 	);
+-- 4). can view and cannot view statistics. Cannot edit .
+
 INSERT INTO cdms_Users (id,firstName,lastName,userName,password) VALUES (
-		cdms_Users_seq.nextval,'Jone','Smith','J.S.2','js2psw'		
+		cdms_Users_seq.nextval,'Jone','Smith','V','v'		
 	);
+
+-- 5). can only  view statistics. Cannot view or edit  Customer and Invoice.
+
 INSERT INTO cdms_Users (id,firstName,lastName,userName,password) VALUES (
-		cdms_Users_seq.nextval,'Paul','Miller','P.M.','pmpsw'		
+		cdms_Users_seq.nextval,'Paul','Miller','S','s'		
 	);
 INSERT INTO cdms_Users (id,firstName,lastName,userName,password) VALUES (
 		cdms_Users_seq.nextval,'Kat','Thomas','K.T.','ktpsw'		
@@ -75,10 +79,5 @@ COLUMN userName  HEADING 'User Name';
 COLUMN password  HEADING 'PSW';
 SELECT id,firstName,LastName,userName,password FROM cdms_Users ORDER BY firstName,lastName;
 
-DISCONNECT;
 
---
--- Create user permissions
---
-@create-permissions.sql  -- invoke script to create permissions
 

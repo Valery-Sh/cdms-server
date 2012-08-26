@@ -4,13 +4,13 @@ package org.cdms.remoting.impl;
 import java.util.ArrayList;
 import org.cdms.domain.dao.EntityDao;
 import org.cdms.domain.dao.RemoteExceptionHandler;
-import org.cdms.entities.Invoice;
-import org.cdms.entities.InvoiceItem;
-import org.cdms.entities.Permission;
-import org.cdms.remoting.InvoiceService;
-import org.cdms.remoting.QueryPage;
-import org.cdms.remoting.exception.RemoteValidationException;
-import org.cdms.remoting.validation.ValidationHandler;
+import org.cdms.shared.entities.Invoice;
+import org.cdms.shared.entities.InvoiceItem;
+import org.cdms.shared.entities.Permission;
+import org.cdms.shared.remoting.InvoiceService;
+import org.cdms.shared.remoting.QueryPage;
+import org.cdms.shared.remoting.exception.RemoteValidationException;
+import org.cdms.shared.remoting.validation.ValidationHandler;
 
 /**
  *

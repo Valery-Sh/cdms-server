@@ -31,12 +31,12 @@
         <!--property name="configLocation" value="classpath:hibernate.cfg.xml" /--> 
         <property name="annotatedClasses"> 
             <list> 
-                <value>org.cdms.entities.User</value> 
-                <value>org.cdms.entities.Permission</value> 
-                <value>org.cdms.entities.Customer</value> 
-                <value>org.cdms.entities.Invoice</value>                 
-                <value>org.cdms.entities.InvoiceItem</value>                 
-                <value>org.cdms.entities.ProductItem</value>                 
+                <value>org.cdms.shared.entities.User</value> 
+                <value>org.cdms.shared.entities.Permission</value> 
+                <value>org.cdms.shared.entities.Customer</value> 
+                <value>org.cdms.shared.entities.Invoice</value>                 
+                <value>org.cdms.shared.entities.InvoiceItem</value>                 
+                <value>org.cdms.shared.entities.ProductItem</value>                 
             </list> 
         </property>         
         <property name="hibernateProperties"> 
@@ -101,7 +101,7 @@
     
     <!-- Default Validation Handler based on constraint annotations -->
       
-    <bean id="validationHandler" class="org.cdms.remoting.validation.ValidationHandler">    
+    <bean id="validationHandler" class="org.cdms.shared.remoting.validation.ValidationHandler">    
         <property name="validator" ref="validator" /> 
     </bean> 
         
@@ -178,7 +178,7 @@
         </property>
         <property name="serviceInterface">
             <!--value>org.cdms.domain.remoting.UserService</value-->
-            <value>org.cdms.remoting.UserService</value>
+            <value>org.cdms.shared.remoting.UserService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>
@@ -194,7 +194,7 @@
             <ref bean="customerServiceImpl"/>
         </property>
         <property name="serviceInterface">
-            <value>org.cdms.remoting.CustomerService</value>
+            <value>org.cdms.shared.remoting.CustomerService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>
@@ -211,7 +211,7 @@
         </property>
         <property name="serviceInterface">
             <!--value>org.cdms.domain.remoting.UserService</value-->
-            <value>org.cdms.remoting.InvoiceService</value>
+            <value>org.cdms.shared.remoting.InvoiceService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>
@@ -227,7 +227,7 @@
             <ref bean="invoiceItemServiceImpl"/>
         </property>
         <property name="serviceInterface">
-            <value>org.cdms.remoting.InvoiceItemService</value>
+            <value>org.cdms.shared.remoting.InvoiceItemService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>
@@ -244,7 +244,7 @@
             <ref bean="productItemServiceImpl"/>
         </property>
         <property name="serviceInterface">
-            <value>org.cdms.remoting.ProductItemService</value>
+            <value>org.cdms.shared.remoting.ProductItemService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>
@@ -258,7 +258,7 @@
             <ref bean="invoiceStatisticsServiceImpl"/>
         </property>
         <property name="serviceInterface">
-            <value>org.cdms.remoting.InvoiceStatisticsService</value>
+            <value>org.cdms.shared.remoting.InvoiceStatisticsService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>
@@ -274,7 +274,7 @@
             <ref bean="authServiceImpl"/>
         </property>
         <property name="serviceInterface">
-            <value>org.cdms.remoting.AuthService</value>
+            <value>org.cdms.shared.remoting.AuthService</value>
         </property>
         <property name="registerTraceInterceptor">
             <value>false</value>

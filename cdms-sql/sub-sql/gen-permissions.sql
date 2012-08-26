@@ -1,5 +1,4 @@
 SET SERVEROUTPUT ON;
-CONNECT hr/hr;
 
 DROP TABLE cdms_Permissions;
 DROP SEQUENCE cdms_Permissions_seq; 
@@ -21,7 +20,7 @@ CREATE SEQUENCE cdms_Permissions_seq
     CACHE 50;
 
 --
--- users with id =10 permission: 'edit' and 'view statistics'
+-- users with id =10 permission: 'edit' and 'view statistics' userName = ALL, psw=all
 --
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'edit',10		
@@ -29,35 +28,50 @@ INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'view statistics',10		
 	);
-
 --
--- users with id in (30,60) permission: 'view'
+-- users with id =20 permission: 'view' and 'view statistics' userName = VS, psw=vs
 --
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
-		cdms_Permissions_seq.nextval,'view',30		
+		cdms_Permissions_seq.nextval,'view',20		
 	);
+INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
+		cdms_Permissions_seq.nextval,'view statistics',20		
+	);
+--
+-- users with id =30 permission: 'edit' cannot  'view statistics'  userName = E, psw=e
+--
+INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
+		cdms_Permissions_seq.nextval,'edit',30		
+	);
+--
+-- users with id =40 permission: 'view' cannot  'view statistics'  userName = V, psw=v
+--
+INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
+		cdms_Permissions_seq.nextval,'view',40		
+	);
+--
+-- users with id =50 permission: 'view statistics'  Can onle view statistice. Cannot  'view or edit'' Customer and Invoice.  userName = S, psw=s
+--
+INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
+		cdms_Permissions_seq.nextval,'view statistics',50		
+	);
+
+--
+-- users with id in (60) permission: 'view'
+--
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'view',60		
 	);
 
 --
--- users with id in (20,40,100) permission: 'edit'
+-- users with id in (100) permission: 'edit'
 --
-INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
-		cdms_Permissions_seq.nextval,'edit',20	
-	);
-INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
-		cdms_Permissions_seq.nextval,'edit',40	
-	);
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'edit',100		
 	);
 --
--- users with id in (50,70,80,90) permission: 'view statistics'
+-- users with id in (70,80,90) permission: 'view statistics'
 --
-INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
-		cdms_Permissions_seq.nextval,'view statistics',50		
-	);
 INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 		cdms_Permissions_seq.nextval,'view statistics',70		
 	);
@@ -69,11 +83,9 @@ INSERT INTO cdms_Permissions (id,permission,userId) VALUES (
 	);
 
 --
--- Now Print all permissions
+-- Print all permissions
 --
 COLUMN id HEADING 'id';
 COLUMN permission HEADING 'Permission';
 COLUMN userId  HEADING 'User Id';
 SELECT userId,id, permission FROM cdms_Permissions ORDER BY userId;
-
-DISCONNECT;
