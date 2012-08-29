@@ -1,5 +1,6 @@
 package org.cdms.remoting.impl;
 
+import java.util.Locale;
 import org.cdms.domain.dao.RemoteExceptionHandler;
 import org.cdms.domain.dao.UserDao;
 import org.cdms.shared.entities.User;
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String userName) {
         User user;
         try {
+            Locale.setDefault(Locale.US);            
             user = userDao.findByUsername(userName);
         } catch(Exception e) {
             user = null;
