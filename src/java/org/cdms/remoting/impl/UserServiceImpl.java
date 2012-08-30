@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String userName) {
         User user;
         try {
-            Locale.setDefault(Locale.US);            
+            Locale.setDefault(Locale.US);   
             user = userDao.findByUsername(userName);
         } catch(Exception e) {
             user = null;
